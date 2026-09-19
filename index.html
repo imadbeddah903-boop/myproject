@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>CreatorKit AI</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #080b14;
+      color: white;
+      line-height: 1.6;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8,11,20,.95);
+      border-bottom: 1px solid #202536;
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: auto;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .logo span {
+      color: #7c5cff;
+    }
+
+    .nav a {
+      color: #cbd5e1;
+      text-decoration: none;
+      margin-left: 22px;
+    }
+
+    .hero {
+      max-width: 1100px;
+      margin: auto;
+      padding: 90px 20px 60px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border: 1px solid #343b55;
+      border-radius: 50px;
+      color: #a99cff;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(42px, 8vw, 76px);
+      line-height: 1.05;
+      margin-bottom: 25px;
+    }
+
+    .gradient {
+      background: linear-gradient(90deg,#7c5cff,#24d6ff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 700px;
+      margin: auto;
+      color: #aab3c5;
+      font-size: 19px;
+    }
+
+    .buttons {
+      margin-top: 35px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 6px;
+    }
+
+    .primary {
+      background: #7c5cff;
+      color: white;
+    }
+
+    .secondary {
+      border: 1px solid #343b55;
+      color: white;
+    }
+
+    .section {
+      max-width: 1100px;
+      margin: auto;
+      padding: 70px 20px;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-title h2 {
+      font-size: 38px;
+    }
+
+    .section-title p {
+      color: #929bb0;
+    }
+
+    .tools {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 20px;
+    }
+
+    .tool {
+      background: #111625;
+      border: 1px solid #20283b;
+      border-radius: 18px;
+      padding: 28px;
+      transition: .25s;
+    }
+
+    .tool:hover {
+      transform: translateY(-6px);
+      border-color: #7c5cff;
+    }
+
+    .icon {
+      font-size: 35px;
+      margin-bottom: 15px;
+    }
+
+    .tool h3 {
+      margin-bottom: 10px;
+    }
+
+    .tool p {
+      color: #9da7ba;
+    }
+
+    .generator {
+      background: #111625;
+      border: 1px solid #20283b;
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      background: #080b14;
+      color: white;
+      border: 1px solid #30384d;
+      border-radius: 12px;
+      padding: 15px;
+      resize: vertical;
+      outline: none;
+      font-size: 16px;
+    }
+
+    textarea:focus {
+      border-color: #7c5cff;
+    }
+
+    .generate {
+      width: 100%;
+      margin-top: 15px;
+      border: none;
+      cursor: pointer;
+      padding: 15px;
+      border-radius: 10px;
+      background: #7c5cff;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    #result {
+      display: none;
+      margin-top: 20px;
+      background: #080b14;
+      border: 1px solid #30384d;
+      padding: 20px;
+      border-radius: 12px;
+      white-space: pre-wrap;
+    }
+
+    .pricing {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 20px;
+    }
+
+    .price {
+      background: #111625;
+      border: 1px solid #20283b;
+      border-radius: 18px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .price.featured {
+      border-color: #7c5cff;
+    }
+
+    .price h3 {
+      font-size: 24px;
+    }
+
+    .amount {
+      font-size: 42px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .price ul {
+      list-style: none;
+      color: #aab3c5;
+      margin-bottom: 25px;
+    }
+
+    .price li {
+      margin: 8px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 50px 20px;
+      color: #7f899e;
+      border-top: 1px solid #202536;
+    }
+
+    @media(max-width:800px) {
+      .tools,
+      .pricing {
+        grid-template-columns: 1fr;
+      }
+
+      .nav a {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">Creator<span>Kit</span> AI</div>
+
+    <nav>
+      <a href="#tools">Tools</a>
+      <a href="#generator">Generator</a>
+      <a href="#pricing">Pricing</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+
+  <div class="badge">
+    AI Tools For Content Creators
+  </div>
+
+  <h1>
+    Create Better Content
+    <span class="gradient">Faster.</span>
+  </h1>
+
+  <p>
+    Generate ideas, scripts, titles and descriptions
+    for your videos with one simple creator toolkit.
+  </p>
+
+  <div class="buttons">
+    <a href="#generator" class="btn primary">
+      Try It Free
+    </a>
+
+    <a href="#tools" class="btn secondary">
+      Explore Tools
+    </a>
+  </div>
+
+</section>
+
+<section class="section" id="tools">
+
+  <div class="section-title">
+    <h2>Creator Tools</h2>
+    <p>Everything you need to start creating.</p>
+  </div>
+
+  <div class="tools">
+
+    <div class="tool">
+      <div class="icon">💡</div>
+      <h3>Video Ideas</h3>
+      <p>Generate fresh ideas for YouTube and social media.</p>
+    </div>
+
+    <div class="tool">
+      <div class="icon">📝</div>
+      <h3>Script Writer</h3>
+      <p>Create structured scripts for your videos.</p>
+    </div>
+
+    <div class="tool">
+      <div class="icon">🚀</div>
+      <h3>Title Generator</h3>
+      <p>Create attention-grabbing video title ideas.</p>
+    </div>
+
+  </div>
+
+</section>
+
+<section class="section" id="generator">
+
+  <div class="section-title">
+    <h2>Free AI Generator</h2>
+    <p>Try the demo below.</p>
+  </div>
+
+  <div class="generator">
+
+    <textarea
+      id="prompt"
+      placeholder="Write your topic here...">
+    </textarea>
+
+    <button class="generate" onclick="generateIdea()">
+      Generate Content
+    </button>
+
+    <div id="result"></div>
+
+  </div>
+
+</section>
+
+<section class="section" id="pricing">
+
+  <div class="section-title">
+    <h2>Simple Pricing</h2>
+    <p>Choose the plan that fits your needs.</p>
+  </div>
+
+  <div class="pricing">
+
+    <div class="price">
+      <h3>Free</h3>
+      <div class="amount">$0</div>
+
+      <ul>
+        <li>✓ Basic tools</li>
+        <li>✓ Limited generations</li>
+        <li>✓ No payment required</li>
+      </ul>
+
+      <a href="#generator" class="btn secondary">
+        Start Free
+      </a>
+    </div>
+
+    <div class="price featured">
+      <h3>Pro</h3>
+      <div class="amount">$9</div>
+
+      <ul>
+        <li>✓ More generations</li>
+        <li>✓ Advanced tools</li>
+        <li>✓ Priority features</li>
+      </ul>
+
+      <a href="#" class="btn primary">
+        Upgrade
+      </a>
+    </div>
+
+    <div class="price">
+      <h3>Creator</h3>
+      <div class="amount">$19</div>
+
+      <ul>
+        <li>✓ Unlimited tools</li>
+        <li>✓ Advanced generation</li>
+        <li>✓ Creator features</li>
+      </ul>
+
+      <a href="#" class="btn secondary">
+        Choose Plan
+      </a>
+    </div>
+
+  </div>
+
+</section>
+
+<footer>
+  © 2026 CreatorKit AI — Built for creators.
+</footer>
+
+<script>
+
+function generateIdea() {
+
+  const prompt =
+    document.getElementById("prompt").value.trim();
+
+  const result =
+    document.getElementById("result");
+
+  if (!prompt) {
+    result.style.display = "block";
+    result.textContent =
+      "Please enter a topic first.";
+    return;
+  }
+
+  result.style.display = "block";
+
+  result.textContent =
+`CONTENT IDEA
+
+Topic:
+${prompt}
+
+VIDEO HOOK:
+"Most people don't know this about ${prompt}..."
+
+VIDEO STRUCTURE:
+1. Strong opening
+2. Explain the main idea
+3. Give useful examples
+4. End with a clear call to action
+
+TITLE IDEAS:
+• The Truth About ${prompt}
+• 7 Things You Need To Know About ${prompt}
+• Nobody Tells You This About ${prompt}
+
+CALL TO ACTION:
+Subscribe for more useful content.`;
+
+}
+
+</script>
+
+</body>
+</html>
