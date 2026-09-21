@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InkSpire</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            padding: 60px 20px;
+        }
+
+        h1 {
+            color: #635bff;
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #667085;
+            font-size: 18px;
+        }
+
+        .card {
+            background: white;
+            margin-top: 35px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.06);
+        }
+
+        #status {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #f3f2ff;
+            color: #635bff;
+            font-weight: bold;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 14px 25px;
+            border: 0;
+            border-radius: 12px;
+            background: #635bff;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: .9;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>InkSpire 🚀</h1>
+
+    <p>
+        مرحبا بك في مشروع InkSpire
+    </p>
+
+    <div class="card">
+
+        <h2>اختبار Supabase</h2>
+
+        <div id="status">
+            جاري الاتصال بـ Supabase...
+        </div>
+
+        <button onclick="testConnection()">
+            اختبار الاتصال
+        </button>
+
+    </div>
+
+</div>
+
+<!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+    /* ==========================
+       SUPABASE SETTINGS
+    ========================== */
+
+    const SUPABASE_URL =
+        "https://oqhfvtdsagjktexwxbpl.supabase.co";[span_2](start_span)[span_2](end_span)
+
+    const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_bCHLZuGNNuxs3mhzsjLa5A_ZjqwtmlW";[span_3](start_span)[span_3](end_span)
+
+
+    /* ==========================
+       CREATE CLIENT
+    ========================== */
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+        );
+
+
+    /* ==========================
+       REAL CONNECTION TEST
+    ========================== */
+
+    async function testConnection() {
+
+        const status =
+            document.getElementById("status");
+
+        if (
+            !SUPABASE_PUBLISHABLE_KEY ||
+            SUPABASE_PUBLISHABLE_KEY ===
+            "حط_هنا_Publishable_Key_ديالك"
+        ) {
+
+            status.textContent =
+                "⚠️ حط Publishable Key ديالك أولاً.";
+
+            return;
+        }
+
+        status.textContent =
+            "⏳ كنختبرو الاتصال...";
+
+        try {
+
+            const { data, error } =
+                await supabaseClient.auth.getSession();
+
+            if (error) {
+                throw error;
+            }
+
+            status.textContent =
+                "✅ الاتصال بـ Supabase خدام بنجاح!";
+
+            console.log(
+                "Supabase connection successful",
+                data
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Supabase connection error:",
+                error
+            );
+
+            status.textContent =
+                "❌ وقع مشكل فالاتصال بـ Supabase. شوف Console.";
+        }
+    }
+
+
+    /* ==========================
+       START TEST
+    ========================== */
+
+    testConnection();
+
+</script>
+
+</body>
+</html>
