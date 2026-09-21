@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InkSpire - اختبار الاتصال</title>
+    <!-- مكتبة Supabase الرسمية -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f9fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h2 {
+            color: #4f46e5;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #6b7280;
+            margin-bottom: 25px;
+        }
+        .status-box {
+            background-color: #f3f4f6;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #374151;
+        }
+        button {
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🚀 InkSpire</h2>
+        <p>مرحباً بك في مشروع InkSpire</p>
+        
+        <div class="status-box" id="statusText">
+            جاري الاتصال بـ Supabase...
+        </div>
+
+        <button id="testBtn">اختبار الاتصال</button>
+    </div>
+
+    <script>
+        // إعدادات الاتصال بـ Supabase مع المفتاح الصحيح
+        const supabaseUrl = 'https://oqhfvtdsagjktexwxbpl.supabase.co';
+        const supabaseKey = 'sb_publishable_bCHLZuGNNuxs3mhzsjLa5A_ZJqwtmlW';
+        
+        // تهيئة عميل Supabase
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        const statusEl = document.getElementById('statusText');
+        const testBtn = document.getElementById('testBtn');
+
+        // تحقق تلقائي عند فتح الصفحة
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const { data, error } = await supabaseClient.from('profiles').select('*').limit(1);
+                if (error) throw error;
+                statusEl.textContent = '✅ متصل بـ Supabase بنجاح!';
+                statusEl.style.color = '#10b981';
+            } catch (err) {
+                statusEl.textContent = '⚠️ متصل، تحقق من صلاحيات الجدول.';
+                statusEl.style.color = '#f59e0b';
+            }
+        });
+
+        // الحدث عند الضغط على زر الاختبار
+        testBtn.addEventListener('click', async () => {
+            statusEl.textContent = '⏳ جاري اختبار الاتصال...';
+            try {
+                const { data, error } = await supabaseClient.from('profiles').select('*').limit(1);
+                if (error) {
+                    alert('خطأ في الاتصال: ' + error.message);
+                    statusEl.textContent = '❌ فشل الاتصال!';
+                    statusEl.style.color = '#ef4444';
+                } else {
+                    alert('🎉 الاتصال ناجح 100% وقاعدة البيانات تستجيب!');
+                    statusEl.textContent = '✅ الاتصال ناجح ومستقر!';
+                    statusEl.style.color = '#10b981';
+                }
+            } catch (err) {
+                alert('حدث خطأ غير متوقع: ' + err.message);
+                statusEl.textContent = '❌ خطأ تقني!';
+                statusEl.style.color = '#ef4444';
+            }
+        });
+    </script>
+</body>
+</html>
