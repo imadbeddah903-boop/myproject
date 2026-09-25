@@ -1,0 +1,5 @@
+async function getCurrentUser(){const {data:{user}}=await supabaseClient.auth.getUser();return user||null}
+async function requireAuth(){const user=await getCurrentUser();if(!user){location.href="/login.html";return null}if(user.email_confirmed_at===null){await supabaseClient.auth.signOut();location.href="/login.html?reason=unverified";return null}sessionStorage.setItem("cached-user",JSON.stringify(user));return user}
+async function logout(){sessionStorage.removeItem("cached-user");await supabaseClient.auth.signOut();location.href="/"}
+function translateError(msg){const m=String(msg||"");if(/invalid login credentials/i.test(m))return"البريد الإلكتروني أو كلمة السر غير صحيحة.";if(/email not confirmed/i.test(m))return"أكد البريد الإلكتروني قبل تسجيل الدخول.";if(/user already registered/i.test(m))return"هاد البريد مسجل من قبل.";if(/password/i.test(m)&&/characters/i.test(m))return"كلمة السر خاصها تكون 8 أحرف على الأقل.";return m}
+supabaseClient.auth.onAuthStateChange((event)=>{if(event==="SIGNED_OUT"&&["/dashboard.html","/create.html","/project.html"].includes(location.pathname))location.href="/login.html"});
