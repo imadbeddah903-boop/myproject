@@ -871,7 +871,6 @@ async function generateSceneImage(button){
         scene.dataset.storageUrl = signed.signedUrl;
         scene.dataset.storagePath = path;
         status.textContent = "✅ الصورة جاهزة للفيديو.";
-        if(imageUrl.startsWith("blob:")) setTimeout(()=>URL.revokeObjectURL(imageUrl), 1000);
 
     }catch(error){
         console.error(error);
