@@ -250,6 +250,21 @@ button:disabled{
     font-size:13px;
 }
 
+.video-panel{
+    margin-top:25px;
+    padding:20px;
+    border:1px solid #2a354a;
+    background:#0a101d;
+    border-radius:16px;
+}
+.video-panel h3{color:#a997ff;margin-bottom:10px}
+.video-status{color:#aeb8c8;line-height:1.7;margin:10px 0}
+.video-progress{height:10px;background:#182236;border-radius:99px;overflow:hidden;margin:12px 0}
+.video-progress-bar{height:100%;width:0;background:#7658ff;transition:width .3s}
+.video-player{width:100%;display:none;border-radius:14px;border:1px solid #2a354a;margin-top:15px}
+.render-btn{width:100%;margin-top:15px;background:#15a36d;color:#fff;padding:15px 20px}
+.render-btn:hover{background:#118b5c}
+
 .scene-image{
     width:100%;
     max-width:100%;
@@ -736,6 +751,16 @@ Target language: ${escapeHTML(language)}
             </div>
 
 
+            <div class="video-panel">
+    <h3>🎞️ Render Video</h3>
+    <div class="video-status" id="videoStatus">ولد الصور ديال جميع المشاهد، ومن بعد ضغط على Render Video.</div>
+    <div class="video-progress"><div class="video-progress-bar" id="videoProgressBar"></div></div>
+    <button class="render-btn" id="renderBtn" onclick="startVideoRender()">🎬 Render Video</button>
+    <video class="video-player" id="videoPlayer" controls playsinline></video>
+</div>
+
+            </div>
+
             <div class="section">
 
                 <h3>🎙️ Full Voice-over</h3>
@@ -774,132 +799,86 @@ Target language: ${escapeHTML(language)}
    GENERATE IMAGE FOR SCENE
 ========================= */
 
+async function ensureAuthenticated(){
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if(session) return session;
+    const { data, error } = await supabaseClient.auth.signInAnonymously();
+    if(error) throw new Error("Authentication failed: " + error.message);
+    if(!data?.session) throw new Error("Authentication session was not created.");
+    return data.session;
+}
+
 async function generateSceneImage(button){
-
-    const scene =
-        button.closest(".scene");
-
-    const prompt =
-        scene.getAttribute("data-prompt");
-
-    const image =
-        scene.querySelector(".scene-image");
-
-    const status =
-        scene.querySelector(".image-status");
-
-    const download =
-        scene.querySelector(".download-btn");
-
+    const scene = button.closest(".scene");
+    const prompt = scene?.getAttribute("data-prompt");
+    const image = scene?.querySelector(".scene-image");
+    const status = scene?.querySelector(".image-status");
+    const download = scene?.querySelector(".download-btn");
 
     if(!prompt){
-
-        status.textContent =
-            "❌ Prompt غير موجود.";
-
+        status.textContent = "❌ Prompt غير موجود.";
         return;
     }
 
-
     button.disabled = true;
-
     download.style.display = "none";
-
     image.style.display = "none";
-
-    status.textContent =
-        "⏳ جاري توليد الصورة...";
-
+    status.textContent = "⏳ جاري توليد الصورة...";
 
     try{
+        const session = await ensureAuthenticated();
 
-        const {
-            data,
-            error
-        } = await supabaseClient
-            .functions
-            .invoke(
-                "generate-image",
-                {
-                    body:{
-                        prompt:prompt,
-                        size:"1536x1024"
-                    }
-                }
-            );
-
-
-        if(error){
-            throw error;
-        }
-
-
-        if(data?.error){
-            throw new Error(data.error);
-        }
-
+        const { data, error } = await supabaseClient.functions.invoke("generate-image", {
+            body:{prompt:prompt, size:"1536x1024"}
+        });
+        if(error) throw error;
+        if(data?.error) throw new Error(data.error);
 
         let imageUrl = null;
-
+        let blob;
 
         if(data?.image_base64){
-
-            const contentType =
-                data.content_type ||
-                "image/png";
-
-            imageUrl =
-                `data:${contentType};base64,${data.image_base64}`;
-
+            const contentType = data.content_type || "image/png";
+            const binary = atob(data.image_base64);
+            const bytes = new Uint8Array(binary.length);
+            for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+            blob = new Blob([bytes], {type:contentType});
+            imageUrl = URL.createObjectURL(blob);
+        }else if(data?.image_url){
+            imageUrl = data.image_url;
+            const response = await fetch(imageUrl);
+            if(!response.ok) throw new Error("تعذر تحميل الصورة المولدة.");
+            blob = await response.blob();
+        }else{
+            throw new Error("لم يتم إرجاع صورة من الخادم.");
         }
 
-        else if(data?.image_url){
+        const path = `users/${session.user.id}/scene-${Date.now()}-${Math.random().toString(36).slice(2)}.png`;
+        const { error: uploadError } = await supabaseClient.storage
+            .from("inkspire-images")
+            .upload(path, blob, {contentType:blob.type || "image/png", upsert:false});
+        if(uploadError) throw uploadError;
 
-            imageUrl =
-                data.image_url;
-
-        }
-
-        else{
-
-            throw new Error(
-                "لم يتم إرجاع صورة من الخادم."
-            );
-
-        }
-
+        const { data: signed, error: signedError } = await supabaseClient.storage
+            .from("inkspire-images")
+            .createSignedUrl(path, 7200);
+        if(signedError) throw signedError;
 
         image.src = imageUrl;
-
         image.style.display = "block";
+        download.dataset.image = imageUrl;
+        download.style.display = "inline-block";
+        scene.dataset.storageUrl = signed.signedUrl;
+        scene.dataset.storagePath = path;
+        status.textContent = "✅ الصورة جاهزة للفيديو.";
+        if(imageUrl.startsWith("blob:")) setTimeout(()=>URL.revokeObjectURL(imageUrl), 1000);
 
-        download.dataset.image =
-            imageUrl;
-
-        download.style.display =
-            "inline-block";
-
-        status.textContent =
-            "✅ تم توليد الصورة بنجاح.";
-
-    }
-
-    catch(error){
-
+    }catch(error){
         console.error(error);
-
-        status.textContent =
-            "❌ فشل توليد الصورة: " +
-            (error?.message || "Unknown error");
-
-    }
-
-    finally{
-
+        status.textContent = "❌ فشل توليد/حفظ الصورة: " + (error?.message || "Unknown error");
+    }finally{
         button.disabled = false;
-
     }
-
 }
 
 
@@ -934,6 +913,117 @@ function downloadSceneImage(button){
 
     link.remove();
 
+}
+
+
+async function startVideoRender(){
+    const renderBtn = document.getElementById("renderBtn");
+    const status = document.getElementById("videoStatus");
+    const bar = document.getElementById("videoProgressBar");
+    const player = document.getElementById("videoPlayer");
+    const topic = document.getElementById("topic").value.trim();
+    const language = document.getElementById("language").value;
+    const style = document.getElementById("style").value;
+
+    if(!topic){ alert("كتب موضوع الفيديو أولاً."); return; }
+
+    const sceneEls = [...document.querySelectorAll("#output .scene")];
+    if(!sceneEls.length){ alert("ولد Video Package أولاً."); return; }
+
+    const missing = sceneEls.findIndex(s => !s.dataset.storageUrl);
+    if(missing !== -1){
+        alert("خاصك تولد الصور ديال جميع المشاهد قبل Render Video.");
+        sceneEls[missing].scrollIntoView({behavior:"smooth",block:"center"});
+        return;
+    }
+
+    renderBtn.disabled = true;
+    player.style.display = "none";
+    bar.style.width = "5%";
+    status.textContent = "⏳ كنوجد مشروع الفيديو...";
+
+    try{
+        const session = await ensureAuthenticated();
+
+        const { data: project, error: projectError } = await supabaseClient
+            .from("projects")
+            .insert({
+                user_id:session.user.id,
+                title:"InkSpire — " + topic,
+                prompt:topic,
+                language:language,
+                style:style,
+                status:"draft"
+            })
+            .select("id")
+            .single();
+        if(projectError) throw projectError;
+
+        const scenesPayload = sceneEls.map((el,index)=>({
+            project_id:project.id,
+            scene_index:index,
+            title:el.querySelector("strong")?.innerText?.replace(/^🎬\s*Scene\s*\d+\s*—\s*/,"") || ("Scene " + (index+1)),
+            visual_prompt:el.dataset.prompt || "",
+            image_url:el.dataset.storageUrl,
+            sfx_url:null,
+            duration_seconds:5,
+            status:"ready"
+        }));
+
+        const { error: scenesError } = await supabaseClient.from("scenes").insert(scenesPayload);
+        if(scenesError) throw scenesError;
+
+        bar.style.width = "15%";
+        status.textContent = "⏳ بعثنا الفيديو للـRender Worker...";
+
+        const { data: jobData, error: jobError } = await supabaseClient.functions.invoke("create-render-job", {
+            body:{project_id:project.id}
+        });
+        if(jobError) throw jobError;
+        if(jobData?.error) throw new Error(jobData.error);
+
+        const jobId = jobData?.job?.id || jobData?.job_id;
+        if(!jobId) throw new Error("لم يتم إنشاء render job.");
+
+        status.textContent = "⏳ الفيديو كيتصاوب... ما تسدش الصفحة.";
+        let done = false;
+
+        for(let i=0;i<360 && !done;i++){
+            await new Promise(r=>setTimeout(r,2500));
+
+            const { data: job, error: pollError } = await supabaseClient
+                .from("render_jobs")
+                .select("status,progress,output_url,error_message")
+                .eq("id",jobId)
+                .single();
+
+            if(pollError) throw pollError;
+
+            const progress = Math.max(15, Math.min(99, Number(job.progress || 0)));
+            bar.style.width = progress + "%";
+
+            if(job.status === "completed" && job.output_url){
+                bar.style.width = "100%";
+                player.src = job.output_url;
+                player.style.display = "block";
+                status.textContent = "✅ الفيديو تسالى. تقدر تشغلو دابا.";
+                done = true;
+                break;
+            }
+
+            if(job.status === "failed"){
+                throw new Error(job.error_message || "Render failed.");
+            }
+        }
+
+        if(!done) throw new Error("Render took too long. Check render_jobs for the job status.");
+    }catch(error){
+        console.error(error);
+        status.textContent = "❌ فشل إنشاء الفيديو: " + (error?.message || "Unknown error");
+        bar.style.width = "0%";
+    }finally{
+        renderBtn.disabled = false;
+    }
 }
 
 
