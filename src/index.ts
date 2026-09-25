@@ -436,7 +436,7 @@ async function uploadRender(
   const { data: signedData, error: signedError } =
     await supabase.storage
       .from(RENDER_BUCKET)
-      .createSignedUrl(storagePath, 60 * 60);
+      .createSignedUrl(storagePath, 60 * 60 * 24 * 7);
 
   if (signedError) {
     throw new Error(
@@ -669,13 +669,37 @@ app.post('/process', async (c) => {
     const body =
       await c.req.json<ProcessRequest>();
 
-    const result =
-      await processRender(body);
+    if (!body.jobId) {
+      return c.json(
+        { ok: false, error: 'jobId is required' },
+        400
+      );
+    }
 
-    return c.json(result);
+    if (!Array.isArray(body.scenes) || body.scenes.length === 0) {
+      return c.json(
+        { ok: false, error: 'At least one scene is required' },
+        400
+      );
+    }
+
+    // Accept the job immediately. The actual FFmpeg render continues
+    // in the Node process and updates render_jobs independently.
+    void processRender(body).catch((error) => {
+      console.error(
+        `[${body.jobId}] Background render failed:`,
+        error
+      );
+    });
+
+    return c.json({
+      ok: true,
+      jobId: body.jobId,
+      accepted: true
+    }, 202);
   } catch (error) {
     console.error(
-      'Render processing failed:',
+      'Render request failed:',
       error
     );
 
