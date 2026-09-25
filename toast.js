@@ -1,0 +1,1 @@
+window.showToast=function(message,type="info",duration=3500){let c=document.querySelector(".toast-container");if(!c){c=document.createElement("div");c.className="toast-container";document.body.appendChild(c)}const t=document.createElement("div");t.className="toast toast-"+type;t.textContent=message;c.appendChild(t);setTimeout(()=>{t.remove()},duration)};
