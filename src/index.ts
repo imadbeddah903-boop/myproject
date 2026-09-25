@@ -34,7 +34,7 @@ const SUPABASE_SERVICE_ROLE_KEY =
 
 const INTERNAL_TOKEN = process.env.X_INKSPIRE_INTERNAL || '';
 
-const RENDER_BUCKET = 'inkspire-renders';
+const RENDER_BUCKET = 'inkspire-videos';
 
 if (!SUPABASE_URL) {
   console.error('Missing SUPABASE_URL');
