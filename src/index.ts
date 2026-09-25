@@ -450,6 +450,27 @@ async function uploadRender(
   };
 }
 
+async function updateRenderJob(
+  jobId: string,
+  patch: {
+    status?: string;
+    progress?: number;
+    output_url?: string | null;
+    error_message?: string | null;
+    started_at?: string | null;
+    completed_at?: string | null;
+  }
+): Promise<void> {
+  const { error } = await supabase
+    .from('render_jobs')
+    .update(patch)
+    .eq('id', jobId);
+
+  if (error) {
+    console.warn(`[${jobId}] Failed to update render_jobs: ${error.message}`);
+  }
+}
+
 async function processRender(
   request: ProcessRequest
 ) {
@@ -484,6 +505,13 @@ async function processRender(
       `[${request.jobId}] Render started`
     );
 
+    await updateRenderJob(request.jobId, {
+      status: 'processing',
+      progress: 1,
+      started_at: new Date().toISOString(),
+      error_message: null
+    });
+
     for (
       let index = 0;
       index < request.scenes.length;
@@ -512,6 +540,16 @@ async function processRender(
         );
 
       sceneFiles.push(sceneVideo);
+
+      const progress = Math.min(
+        90,
+        Math.round(((index + 1) / request.scenes.length) * 80) + 10
+      );
+
+      await updateRenderJob(request.jobId, {
+        status: 'processing',
+        progress
+      });
     }
 
     const finalPath = path.join(
@@ -540,6 +578,21 @@ async function processRender(
         request.jobId
       );
 
+    await updateRenderJob(request.jobId, {
+      status: 'completed',
+      progress: 100,
+      output_url: upload.signedUrl,
+      completed_at: new Date().toISOString(),
+      error_message: null
+    });
+
+    if (request.projectId) {
+      await supabase
+        .from('projects')
+        .update({ status: 'completed' })
+        .eq('id', request.projectId);
+    }
+
     console.log(
       `[${request.jobId}] Render completed`
     );
@@ -552,6 +605,24 @@ async function processRender(
       signedUrl: upload.signedUrl,
       fileSize: stat.size
     };
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown render error';
+
+    await updateRenderJob(request.jobId, {
+      status: 'failed',
+      error_message: message,
+      completed_at: new Date().toISOString()
+    });
+
+    if (request.projectId) {
+      await supabase
+        .from('projects')
+        .update({ status: 'failed' })
+        .eq('id', request.projectId);
+    }
+
+    throw error;
   } finally {
     await fs.rm(tempRoot, {
       recursive: true,
