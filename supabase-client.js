@@ -1,1 +1,1 @@
-const SUPABASE_URL="https://oqhfvtdsagjktexwxbpl.supabase.co";const SUPABASE_PUBLISHABLE_KEY="sb_publishable_bCHLZuGNNuxs3mhzsjLa5A_ZJqwtmlW";const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const SUPABASE_URL="https://oqhfvtdsagjktexwxbpl.supabase.co";const SUPABASE_PUBLISHABLE_KEY="sb_publishable_bCHLZuGNNuxs3mhzsjLa5A_ZJqwtmlW";const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
