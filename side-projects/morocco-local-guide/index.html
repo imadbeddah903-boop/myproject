@@ -11,23 +11,41 @@ main{max-width:1050px;margin:auto;padding:22px 16px 50px}.hero{padding:34px 24px
 h1{font-size:clamp(32px,7vw,58px);line-height:1.05;margin:18px 0 12px}.hero p{max-width:650px;line-height:1.8;color:#e4eee6}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.btn{border:0;border-radius:13px;padding:12px 17px;font-weight:700;text-decoration:none;cursor:pointer;background:#fff;color:#173b2a}.btn.alt{background:#ffffff18;color:#fff;border:1px solid #ffffff40}
 .toolbar{margin:22px 0 14px;display:flex;gap:10px;flex-wrap:wrap}input,select{padding:12px 14px;border:1px solid #dce3dc;border-radius:12px;background:#fff;font:inherit}input{flex:1;min-width:210px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{background:#fff;padding:19px;border-radius:20px;border:1px solid #e1e7e1;box-shadow:0 6px 20px #00000008}.card .icon{font-size:30px}.card h3{margin:10px 0 7px}.card p{color:#58635a;line-height:1.7;margin:0}.tag{display:inline-block;margin-top:14px;padding:6px 9px;border-radius:9px;background:#edf4ed;color:#315d3e;font-size:12px;font-weight:700}.empty{display:none;text-align:center;padding:30px;color:#667066}footer{text-align:center;margin-top:28px;color:#687168;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{background:#fff;padding:19px;border-radius:20px;border:1px solid #e1e7e1;box-shadow:0 6px 20px #00000008}.card .icon{font-size:30px}.card h3{margin:10px 0 7px}.card p{color:#58635a;line-height:1.7;margin:0}.tag{display:inline-block;margin-top:14px;padding:6px 9px;border-radius:9px;background:#edf4ed;color:#315d3e;font-size:12px;font-weight:700}
+.empty{text-align:center;padding:30px;color:#667066}.loading{text-align:center;padding:28px;color:#667066}.status{font-size:13px;color:#687168;margin-top:10px}footer{text-align:center;margin-top:28px;color:#687168;font-size:13px}
 </style>
 </head>
 <body><main>
 <section class="hero"><span class="badge">🇲🇦 AtlasGo · Local Discovery</span><h1>اكتشف المغرب بطريقة أبسط</h1><p>أماكن، طبيعة، أنشطة وخدمات محلية في مكان واحد.</p><div class="actions"><a class="btn" href="#places">استكشف الأماكن</a><a class="btn alt" href="#how">كيف يعمل؟</a></div></section>
 <section id="places"><div class="toolbar"><input id="search" type="search" placeholder="ابحث عن مكان أو نشاط..."><select id="category"><option value="all">كل الفئات</option><option value="nature">طبيعة</option><option value="activity">أنشطة</option><option value="service">خدمات</option></select></div>
-<div class="grid" id="grid">
-<article class="card" data-category="nature" data-name="الطبيعة والجبال"><div class="icon">🏔️</div><h3>الطبيعة والجبال</h3><p>اكتشف الوديان والجبال والمناظر الطبيعية.</p><span class="tag">طبيعة</span></article>
-<article class="card" data-category="activity" data-name="المغامرات والأنشطة"><div class="icon">🥾</div><h3>المغامرات والأنشطة</h3><p>أفكار للمشي والاستكشاف وتجارب محلية.</p><span class="tag">أنشطة</span></article>
-<article class="card" data-category="service" data-name="الإقامة والمطاعم والنقل"><div class="icon">🏡</div><h3>الإقامة والمطاعم والنقل</h3><p>خدمات يحتاجها الزائر أثناء الرحلة.</p><span class="tag">خدمات</span></article>
-<article class="card" data-category="nature" data-name="أماكن هادئة"><div class="icon">🌿</div><h3>أماكن هادئة</h3><p>أماكن مناسبة للطبيعة والهدوء.</p><span class="tag">طبيعة</span></article>
-</div><div class="empty" id="empty">ما لقيناش نتائج مطابقة للبحث.</div></section>
-<section id="how" class="card" style="margin-top:18px"><h2>AtlasGo</h2><p>المرحلة التالية: بيانات حقيقية للمنطقة، صفحات لكل مكان، خريطة، تواصل، ثم لوحة لأصحاب الأنشطة.</p></section>
-<footer>AtlasGo · Day 1 MVP</footer>
+<div id="loading" class="loading">جاري تحميل الأماكن...</div><div class="grid" id="grid"></div><div class="empty" id="empty" hidden>ما لقيناش نتائج مطابقة للبحث.</div><div id="status" class="status"></div></section>
+<section id="how" class="card" style="margin-top:18px"><h2>AtlasGo</h2><p>النسخة الأولى مربوطة بقاعدة بيانات Supabase. المرحلة التالية: صفحات تفصيلية، خريطة وتواصل مع أصحاب الأنشطة.</p></section>
+<footer>AtlasGo · V1 Foundation</footer>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const search=document.getElementById('search'),category=document.getElementById('category'),cards=[...document.querySelectorAll('.card[data-category]')],empty=document.getElementById('empty');
-function filter(){const q=search.value.trim().toLowerCase(),c=category.value;let n=0;cards.forEach(x=>{const ok=(c==='all'||x.dataset.category===c)&&x.dataset.name.toLowerCase().includes(q);x.style.display=ok?'block':'none';if(ok)n++});empty.style.display=n?'none':'block'}
-search.addEventListener('input',filter);category.addEventListener('change',filter);
+const SUPABASE_URL='https://oqhfvtdsagjktexwxbpl.supabase.co';
+const SUPABASE_KEY='sb_publishable_bCHLZuGNNuxs3mhzsjLa5A_ZJqwtmlW';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const search=document.getElementById('search'),category=document.getElementById('category'),grid=document.getElementById('grid'),empty=document.getElementById('empty'),loading=document.getElementById('loading'),status=document.getElementById('status');
+let places=[];
+const icons={nature:'🏔️',activity:'🥾',service:'🏡'};
+const labels={nature:'طبيعة',activity:'أنشطة',service:'خدمات'};
+function render(){
+ const q=search.value.trim().toLowerCase(),c=category.value;
+ const filtered=places.filter(p=>(c==='all'||p.category===c)&&((p.name+' '+p.description+' '+p.region).toLowerCase().includes(q)));
+ grid.innerHTML=filtered.map(p=>'<article class="card"><div class="icon">'+(icons[p.category]||'📍')+'</div><h3>'+escapeHtml(p.name)+'</h3><p>'+escapeHtml(p.description)+'</p><span class="tag">'+(labels[p.category]||'مكان')+(p.region?' · '+escapeHtml(p.region):'')+'</span></article>').join('');
+ empty.hidden=filtered.length!==0;loading.style.display='none';
+}
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+async function loadPlaces(){
+ const {data,error}=await db.from('atlas_places').select('id,name,category,description,region,latitude,longitude,image_url,contact_url').order('created_at',{ascending:false});
+ if(error){status.textContent='تعذر تحميل البيانات من الخادم.';loading.textContent='استعمل النسخة التجريبية المحلية.';places=[
+ {name:'الطبيعة والجبال',category:'nature',description:'اكتشف الوديان والجبال والمناظر الطبيعية.',region:'المغرب'},
+ {name:'المغامرات والأنشطة',category:'activity',description:'أفكار للمشي والاستكشاف وتجارب محلية.',region:'المغرب'},
+ {name:'الإقامة والمطاعم والنقل',category:'service',description:'خدمات يحتاجها الزائر أثناء الرحلة.',region:'المغرب'}
+ ];render();return}
+ places=data||[];render();status.textContent='البيانات متصلة بـ Supabase ✓';
+}
+search.addEventListener('input',render);category.addEventListener('change',render);loadPlaces();
 </script></body></html>
