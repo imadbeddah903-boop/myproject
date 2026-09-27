@@ -3,6 +3,7 @@ const SUPABASE_KEY="sb_publishable_bCHLZuGNNuxs3mhzsjLa5A_ZJqwtmlW";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let places=[];
 
+
 const labels={nature:"الطبيعة",adventure:"المغامرة",culture:"الثقافة",relaxation:"الاسترخاء"};
 const icons={nature:"🌿",adventure:"🥾",culture:"🏛️",relaxation:"🌊"};
 const regions=["طنجة-تطوان-الحسيمة","الشرق","فاس-مكناس","الرباط-سلا-القنيطرة","بني ملال-خنيفرة","الدار البيضاء-سطات","مراكش-آسفي","درعة-تافيلالت","سوس-ماسة","كلميم-واد نون","العيون-الساقية الحمراء","الداخلة-وادي الذهب"];
@@ -40,7 +41,9 @@ const moroccoDestinations=[
 
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const mapsUrl=name=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(name+", Morocco");
-const mapsDir=name=> "https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(name+", Morocco");
+const mapsDir=(name,origin="",mode="driving")=> "https://www.google.com/maps/dir/?api=1"+(origin?"&origin="+encodeURIComponent(origin):"")+"&destination="+encodeURIComponent(name)+(mode?"&travelmode="+encodeURIComponent(mode):"");
+const travelModes={flight:"✈️ طائرة",car:"🚗 سيارة",motorcycle:"🏍️ موتور",train:"🚆 قطار",bus:"🚌 حافلة",ferry:"🚢 عبّارة / باخرة",mixed:"🔄 مختلط"};
+const googleMode={car:"driving",motorcycle:"two-wheeler",train:"transit",bus:"transit",mixed:"transit"};
 
 function mergePlaces(dbRows){
  const db=(dbRows||[]).map(p=>({...p,source:"db"}));
@@ -49,6 +52,29 @@ function mergePlaces(dbRows){
  return [...db,...local];
 }
 
+async function loadCountries(){
+ try{
+  const res=await fetch("https://restcountries.com/v3.1/all?fields=name");
+  const data=await res.json(); data.sort((x,y)=>(x.name.common||"").localeCompare(y.name.common||""));
+  const options=data.map(c=>"<option>"+esc(c.name.common)+"</option>").join("");
+  document.querySelector("#country").innerHTML=options;
+  document.querySelector("#startCountry").innerHTML=options;
+ }catch(e){}
+}
+function routeInfo(){
+ const sc=document.querySelector("#startCountry").value;
+ const dc=document.querySelector("#country").value;
+ const s=document.querySelector("#start").value.trim();
+ const d=document.querySelector("#destination").value.trim();
+ const mode=document.querySelector("#transport").value;
+ const box=document.querySelector("#routeSummary");
+ if(!s||!d){box.innerHTML="<div class=\"notice\">دخل مدينة الانطلاق ومدينة الوجهة باش يظهر لك المسار.</div>";return;}
+ const origin=s+", "+sc;
+ const dest=d+", "+dc;
+ const gm=mode==="flight"?"":(googleMode[mode]||"driving");
+ const url=mapsDir(dest,origin,gm);
+ box.innerHTML="<div class=\"routeCard\"><div><b>"+esc(origin)+" → "+esc(dest)+"</b><p class=\"muted\">"+esc(travelModes[mode])+" • Google Maps يعرض المسافة ووقت التنقل المتاح للمسار.</p></div><a class=\"mapAll\" target=\"_blank\" rel=\"noopener\" href=\""+url+"\">🗺️ افتح المسار</a></div>";
+}
 async function loadPlaces(){
  const {data,error}=await sb.from("trip_planner_places").select("*").order("name");
  places=mergePlaces(data||[]);
@@ -77,13 +103,17 @@ function plan(){
  const type=document.querySelector("#type").value;
  const region=document.querySelector("#region").value;
  const start=(document.querySelector("#start").value||"").trim();
+ const startCountry=document.querySelector("#startCountry").value;
+ const country=document.querySelector("#country").value;
+ const destination=(document.querySelector("#destination").value||"").trim();
+ const subregion=(document.querySelector("#subregion").value||"").trim();
  const transport=document.querySelector("#transport").value;
  const budgetPerDay=d?b/d:0;
  const ranked=[...places].sort((a,z)=>scorePlace(z,type,region,budgetPerDay)-scorePlace(a,type,region,budgetPerDay));
  const chosen=ranked.filter(p=>region==="all"||p.region===region).slice(0,Math.max(1,Math.min(d,8)));
  const finalPlaces=chosen.length?chosen:ranked.slice(0,Math.max(1,Math.min(d,8)));
  const daily=Math.floor(b/d),perPerson=Math.floor(b/n),perPersonDay=Math.floor(b/(n*d));
- const transportText={car:"السيارة",train:"القطار",bus:"الحافلة",mixed:"تنقل مختلط"}[transport];
+ const transportText=travelModes[transport]||transport;
  let daysHtml="";
  for(let i=1;i<=d;i++){
    const p=finalPlaces[(i-1)%finalPlaces.length];
@@ -96,4 +126,11 @@ function plan(){
  r.scrollIntoView({behavior:"smooth",block:"start"});
 }
 document.querySelector("#planBtn").addEventListener("click",plan);
+document.querySelector("#transport").addEventListener("change",routeInfo);
+document.querySelector("#start").addEventListener("input",routeInfo);
+document.querySelector("#destination").addEventListener("input",routeInfo);
+document.querySelector("#country").addEventListener("change",routeInfo);
+document.querySelector("#startCountry").addEventListener("change",routeInfo);
+loadCountries();
 loadPlaces();
+routeInfo();
