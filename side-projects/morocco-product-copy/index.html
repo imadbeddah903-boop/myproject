@@ -3,16 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="مولد وصف المنتجات للتجار المغاربة بالعربية والفرنسية وWhatsApp وFacebook.">
-<title>Product Copy Morocco — مولد وصف المنتجات</title>
+<meta name="description" content="WasfPro Maroc — مولد وصف المنتجات للتجار المغاربة بالعربية والفرنسية وWhatsApp وFacebook.">
+<meta name="theme-color" content="#0f766e">
+<title>WasfPro Maroc — مولد وصف المنتجات</title>
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
 <main>
 <section class="hero">
-<span class="badge">🇲🇦 Product Copy Morocco · V1</span>
+<div class="brand-row">
+<div class="brand">WasfPro <span>MAROC</span></div>
+<span class="badge">🇲🇦 V1</span>
+</div>
 <h1>حوّل معلومات المنتج إلى إعلان جاهز للبيع.</h1>
-<p>أداة بسيطة للتاجر المغربي: دخل اسم المنتج، الثمن والمميزات، وخذ نسخاً جاهزة بالعربية والفرنسية وWhatsApp وFacebook.</p>
+<p>أداة عملية للتاجر المغربي: دخل اسم المنتج، الثمن والمميزات، وخذ نسخاً جاهزة بالعربية والفرنسية وWhatsApp وFacebook.</p>
+<div class="hero-pills">
+<span>⚡ سريع</span><span>🇲🇦 مغربي</span><span>📱 Mobile first</span>
+</div>
 </section>
 
 <section class="grid">
@@ -53,12 +60,15 @@
 <button type="submit">✨ أنشئ المحتوى</button>
 <button type="button" class="secondary" onclick="clearAll()">مسح</button>
 </div>
-<p class="mini">V1: التوليد يعمل محلياً داخل الصفحة. لا توجد مفاتيح API مكشوفة في المتصفح.</p>
+<p class="mini">التوليد الحالي محلي وآمن داخل الصفحة؛ الربط مع Supabase يستعمل فقط إعدادات عامة للقراءة.</p>
 </form>
 </section>
 
 <section class="card">
+<div class="result-head">
 <h2>✍️ المحتوى الجاهز</h2>
+<span id="dbBadge" class="db-badge">Supabase…</span>
+</div>
 <div id="result" class="hidden">
 <div class="tabs">
 <button class="tab active" data-tab="ar" onclick="showTab('ar')">العربية</button>
@@ -70,16 +80,17 @@
 <div class="actions"><button type="button" onclick="copyText()">📋 نسخ النص</button></div>
 </div>
 <p id="status" class="status" aria-live="polite"></p>
-<p class="mini">المرحلة القادمة: ربط توليد AI حقيقي، حفظ المنتجات، رفع الصور وحسابات التجار.</p>
+<div id="templates" class="templates" aria-live="polite"></div>
 </section>
 </section>
 
 <section class="features">
 <div class="feature"><b>🇲🇦 محلي</b><span class="mini">موجه للتاجر المغربي والعربية/الفرنسية.</span></div>
 <div class="feature"><b>💬 WhatsApp</b><span class="mini">نسخة قصيرة مناسبة للبيع بالمراسلة.</span></div>
-<div class="feature"><b>⚡ سريع</b><span class="mini">من معلومات بسيطة إلى عدة صيغ جاهزة.</span></div>
+<div class="feature"><b>☁️ Supabase</b><span class="mini">قوالب V1 محمّلة من قاعدة بيانات آمنة للقراءة العامة.</span></div>
 </section>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./app.js"></script>
 </body>
 </html>
