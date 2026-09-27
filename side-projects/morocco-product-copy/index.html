@@ -1,72 +1,85 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="مولد وصف المنتجات للتجار المغاربة بالعربية والفرنسية وWhatsApp.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="مولد وصف المنتجات للتجار المغاربة بالعربية والفرنسية وWhatsApp وFacebook.">
 <title>Product Copy Morocco — مولد وصف المنتجات</title>
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f5f7fb;color:#171a21}
-main{max-width:980px;margin:auto;padding:22px 16px 45px}.hero{background:linear-gradient(135deg,#20243a,#424a73);color:#fff;padding:30px 24px;border-radius:26px;box-shadow:0 15px 40px #0002}
-.badge{display:inline-block;padding:7px 11px;border-radius:999px;background:#ffffff18;border:1px solid #ffffff35;font-size:13px}
-h1{font-size:clamp(30px,6vw,50px);margin:17px 0 10px;line-height:1.08}.hero p{line-height:1.8;color:#e6e8f0}
-.panel{background:#fff;border:1px solid #e3e6ee;border-radius:20px;padding:20px;margin-top:16px;box-shadow:0 7px 24px #00000008}
-label{display:block;font-weight:700;margin:12px 0 6px}input,textarea,select{width:100%;padding:12px 13px;border:1px solid #d9dde6;border-radius:11px;font:inherit;background:#fff}textarea{resize:vertical}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
-button{border:0;border-radius:12px;padding:12px 17px;background:#20243a;color:#fff;font-weight:700;cursor:pointer}button.secondary{background:#eef0f6;color:#20243a}
-.result{display:none}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#eef0f6;color:#20243a}.tab.active{background:#20243a;color:#fff}
-.copybox{white-space:pre-wrap;line-height:1.8;background:#f7f8fb;border:1px solid #e1e4ec;padding:17px;border-radius:14px;min-height:130px}
-.small{color:#697181;font-size:13px}
-@media(max-width:650px){.row{grid-template-columns:1fr}}
-</style>
+<link rel="stylesheet" href="./styles.css">
 </head>
 <body>
 <main>
 <section class="hero">
-<span class="badge">🇲🇦 Product Copy Morocco · MVP</span>
-<h1>وصف منتج جاهز للبيع</h1>
-<p>دخل معلومات بسيطة على المنتج، وخذ مسودة بالعربية، الفرنسية وWhatsApp. الهدف: ربح الوقت للتاجر المغربي.</p>
+<span class="badge">🇲🇦 Product Copy Morocco · V1</span>
+<h1>حوّل معلومات المنتج إلى إعلان جاهز للبيع.</h1>
+<p>أداة بسيطة للتاجر المغربي: دخل اسم المنتج، الثمن والمميزات، وخذ نسخاً جاهزة بالعربية والفرنسية وWhatsApp وFacebook.</p>
 </section>
 
-<section class="panel">
-<h2>معلومات المنتج</h2>
-<label for="name">اسم المنتج</label><input id="name" placeholder="مثال: حقيبة جلدية">
-<div class="row">
-<div><label for="price">الثمن</label><input id="price" placeholder="199 DH"></div>
-<div><label for="audience">الزبون المستهدف</label><select id="audience"><option>عام</option><option>نساء</option><option>رجال</option><option>أطفال</option></select></div>
+<section class="grid">
+<section class="card">
+<h2>📦 معلومات المنتج</h2>
+<form id="productForm">
+<label for="name">اسم المنتج</label>
+<input id="name" required placeholder="مثال: حقيبة جلدية نسائية">
+
+<div class="two">
+<div>
+<label for="price">الثمن</label>
+<input id="price" placeholder="199 DH">
 </div>
-<label for="info">المميزات والمعلومات</label>
-<textarea id="info" rows="5" placeholder="الخامة، اللون، المقاس، الضمان، التوصيل..."></textarea>
-<div class="actions"><button onclick="generate()">✨ أنشئ الوصف</button><button class="secondary" onclick="clearForm()">مسح</button></div>
-<p class="small">حالياً التوليد محلي داخل الصفحة؛ في المرحلة التالية نربط API للذكاء الاصطناعي.</p>
+<div>
+<label for="category">نوع المنتج</label>
+<select id="category">
+<option>منتج</option><option>ملابس</option><option>إلكترونيات</option><option>تجميل</option><option>منزل</option><option>إكسسوارات</option>
+</select>
+</div>
+</div>
+
+<div class="two">
+<div>
+<label for="audience">الزبون المستهدف</label>
+<select id="audience"><option>عام</option><option>النساء</option><option>الرجال</option><option>الأطفال</option><option>العائلات</option></select>
+</div>
+<div>
+<label for="tone">أسلوب الكتابة</label>
+<select id="tone"><option>احترافي</option><option>بسيط</option><option>تسويقي</option><option>ودود</option></select>
+</div>
+</div>
+
+<label for="details">المميزات والمعلومات</label>
+<textarea id="details" placeholder="الخامة، اللون، المقاس، الضمان، التوصيل، أهم ميزة..."></textarea>
+
+<div class="actions">
+<button type="submit">✨ أنشئ المحتوى</button>
+<button type="button" class="secondary" onclick="clearAll()">مسح</button>
+</div>
+<p class="mini">V1: التوليد يعمل محلياً داخل الصفحة. لا توجد مفاتيح API مكشوفة في المتصفح.</p>
+</form>
 </section>
 
-<section class="panel result" id="result">
-<h2>النتيجة</h2>
+<section class="card">
+<h2>✍️ المحتوى الجاهز</h2>
+<div id="result" class="hidden">
 <div class="tabs">
 <button class="tab active" data-tab="ar" onclick="showTab('ar')">العربية</button>
 <button class="tab" data-tab="fr" onclick="showTab('fr')">Français</button>
 <button class="tab" data-tab="wa" onclick="showTab('wa')">WhatsApp</button>
+<button class="tab" data-tab="fb" onclick="showTab('fb')">Facebook</button>
 </div>
-<div id="copybox" class="copybox"></div>
-<div class="actions"><button onclick="copyText()">📋 نسخ النص</button></div>
-<p id="status" class="small"></p>
+<div id="preview" class="preview"></div>
+<div class="actions"><button type="button" onclick="copyText()">📋 نسخ النص</button></div>
+</div>
+<p id="status" class="status" aria-live="polite"></p>
+<p class="mini">المرحلة القادمة: ربط توليد AI حقيقي، حفظ المنتجات، رفع الصور وحسابات التجار.</p>
+</section>
+</section>
+
+<section class="features">
+<div class="feature"><b>🇲🇦 محلي</b><span class="mini">موجه للتاجر المغربي والعربية/الفرنسية.</span></div>
+<div class="feature"><b>💬 WhatsApp</b><span class="mini">نسخة قصيرة مناسبة للبيع بالمراسلة.</span></div>
+<div class="feature"><b>⚡ سريع</b><span class="mini">من معلومات بسيطة إلى عدة صيغ جاهزة.</span></div>
 </section>
 </main>
-<script>
-let outputs={ar:'',fr:'',wa:''},current='ar';
-function generate(){
- const n=document.getElementById('name').value.trim()||'منتج جديد';
- const p=document.getElementById('price').value.trim();
- const a=document.getElementById('audience').value;
- const i=document.getElementById('info').value.trim()||'جودة مميزة وتصميم عملي';
- outputs.ar='🛍️ '+n+'\n\nمنتج مناسب لـ'+a+'، مصمم للاستعمال اليومي بجودة ومواصفات مميزة.\n\n'+i+(p?'\n\n💰 الثمن: '+p:'')+'\n🚚 التوصيل متوفر حسب المنطقة.\n📩 تواصل معنا للطلب والاستفسار.';
- outputs.fr='🛍️ '+n+'\n\nUn produit pratique et adapté à '+a+', avec des caractéristiques pensées pour un usage quotidien.\n\n'+i+(p?'\n\n💰 Prix : '+p:'')+'\n🚚 Livraison selon la région.\n📩 Contactez-nous pour commander.';
- outputs.wa='🔥 '+n+'\n\n'+i+(p?'\n💰 '+p:'')+'\n\n🚚 Livraison disponible.\n📲 Pour commander, envoyez-nous un message sur WhatsApp.';
- document.getElementById('result').style.display='block';showTab('ar');
-}
-function showTab(tab){current=tab;document.getElementById('copybox').textContent=outputs[tab];document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));document.getElementById('status').textContent=''}
-async function copyText(){try{await navigator.clipboard.writeText(outputs[current]);document.getElementById('status').textContent='تم نسخ النص ✓'}catch(e){document.getElementById('status').textContent='ما قدرناش ننسخو تلقائياً؛ حدده وانسخه يدوياً.'}}
-function clearForm(){['name','price','info'].forEach(id=>document.getElementById(id).value='');document.getElementById('result').style.display='none'}
-</script>
+<script src="./app.js"></script>
 </body>
 </html>
