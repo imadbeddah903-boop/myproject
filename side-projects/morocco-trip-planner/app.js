@@ -5,7 +5,6 @@ let places=[];
 
 const labels={nature:"الطبيعة",adventure:"المغامرة",culture:"الثقافة",relaxation:"الاسترخاء"};
 const icons={nature:"🌿",adventure:"🥾",culture:"🏛️",relaxation:"🌊"};
-const regions=["طنجة-تطوان-الحسيمة","الشرق","فاس-مكناس","الرباط-سلا-القنيطرة","بني ملال-خنيفرة","الدار البيضاء-سطات","مراكش-آسفي","درعة-تافيلالت","سوس-ماسة","كلميم-واد نون","العيون-الساقية الحمراء","الداخلة-وادي الذهب"];
 const travelModes={flight:"✈️ طائرة",car:"🚗 سيارة",train:"🚆 قطار",bus:"🚌 حافلة",ferry:"🚢 عبّارة / باخرة",mixed:"🔄 مختلط"};
 const googleMode={car:"driving",train:"transit",bus:"transit",mixed:"transit"};
 
@@ -91,7 +90,7 @@ function routeInfo(){
 function scorePlace(p,type,region,budgetPerDay){
  let score=0;
  if(p.category===type)score+=5;
- if(region!=="all"&&p.region===region)score+=8;
+ if(region&&p.region===region)score+=8;
  const cost=Number(p.estimated_daily_cost_dh||0);
  if(cost<=budgetPerDay)score+=3;
  score+=Math.max(0,2-Math.abs(cost-budgetPerDay)/250);
@@ -103,7 +102,7 @@ function plan(){
  const b=Math.max(0,+document.querySelector("#budget").value||0);
  const n=Math.max(1,Math.min(20,+document.querySelector("#people").value||1));
  const type=document.querySelector("#type").value;
- const region=document.querySelector("#region").value;
+ const region=(document.querySelector("#region").value||"").trim();
  const start=(document.querySelector("#start").value||"").trim();
  const startCountry=document.querySelector("#startCountry").value;
  const country=document.querySelector("#country").value;
@@ -112,7 +111,7 @@ function plan(){
  const transport=document.querySelector("#transport").value;
  const budgetPerDay=b/d;
  const ranked=[...places].sort((a,z)=>scorePlace(z,type,region,budgetPerDay)-scorePlace(a,type,region,budgetPerDay));
- const chosen=ranked.filter(p=>region==="all"||p.region===region).slice(0,Math.max(1,Math.min(d,8)));
+ const chosen=region ? ranked.filter(p=>p.region===region).slice(0,Math.max(1,Math.min(d,8))) : ranked.slice(0,Math.max(1,Math.min(d,8)));
  const finalPlaces=chosen.length?chosen:ranked.slice(0,Math.max(1,Math.min(d,8)));
  const daily=Math.floor(b/d),perPersonDay=Math.floor(b/(n*d));
  let daysHtml="";
