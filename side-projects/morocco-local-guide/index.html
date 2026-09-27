@@ -5,47 +5,105 @@
 <meta name="description" content="AtlasGo — دليل محلي لاكتشاف الطبيعة والأنشطة والخدمات في المغرب.">
 <title>AtlasGo — اكتشف المغرب</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f4f7f2;color:#172018}
-main{max-width:1050px;margin:auto;padding:22px 16px 50px}.hero{padding:34px 24px;border-radius:28px;background:linear-gradient(135deg,#173b2a,#315d3e);color:#fff;box-shadow:0 14px 40px #0002}
-.badge{display:inline-block;background:#ffffff1c;border:1px solid #ffffff33;padding:7px 12px;border-radius:999px;font-size:13px}
-h1{font-size:clamp(32px,7vw,58px);line-height:1.05;margin:18px 0 12px}.hero p{max-width:650px;line-height:1.8;color:#e4eee6}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.btn{border:0;border-radius:13px;padding:12px 17px;font-weight:700;text-decoration:none;cursor:pointer;background:#fff;color:#173b2a}.btn.alt{background:#ffffff18;color:#fff;border:1px solid #ffffff40}
-.toolbar{margin:22px 0 14px;display:flex;gap:10px;flex-wrap:wrap}input,select{padding:12px 14px;border:1px solid #dce3dc;border-radius:12px;background:#fff;font:inherit}input{flex:1;min-width:210px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{background:#fff;padding:19px;border-radius:20px;border:1px solid #e1e7e1;box-shadow:0 6px 20px #00000008}.card .icon{font-size:30px}.card h3{margin:10px 0 7px}.card p{color:#58635a;line-height:1.7;margin:0}.tag{display:inline-block;margin-top:14px;padding:6px 9px;border-radius:9px;background:#edf4ed;color:#315d3e;font-size:12px;font-weight:700}
-.empty{text-align:center;padding:30px;color:#667066}.loading{text-align:center;padding:28px;color:#667066}.status{font-size:13px;color:#687168;margin-top:10px}footer{text-align:center;margin-top:28px;color:#687168;font-size:13px}
-</style>
-</head>
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f7f2;color:#172018}
+main{max-width:1100px;margin:auto;padding:18px 16px 50px}.hero{position:relative;overflow:hidden;padding:42px 26px;border-radius:30px;background:linear-gradient(135deg,#173b2a,#315d3e 60%,#497653);color:#fff;box-shadow:0 18px 50px #0002}.hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:#ffffff10;right:-80px;top:-100px}.badge{display:inline-block;background:#ffffff1c;border:1px solid #ffffff33;padding:7px 12px;border-radius:999px;font-size:13px;position:relative;z-index:1}h1{font-size:clamp(34px,7vw,62px);line-height:1.02;margin:18px 0 12px;position:relative;z-index:1}.hero p{max-width:680px;line-height:1.9;color:#e4eee6;font-size:17px;position:relative;z-index:1}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;position:relative;z-index:1}.btn{border:0;border-radius:13px;padding:12px 17px;font-weight:800;text-decoration:none;cursor:pointer;background:#fff;color:#173b2a}.btn.alt{background:#ffffff18;color:#fff;border:1px solid #ffffff40}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.stat{background:#fff;border:1px solid #e1e7e1;border-radius:18px;padding:14px;text-align:center}.stat strong{display:block;font-size:24px;color:#315d3e}.stat span{font-size:12px;color:#687168}
+.toolbar{margin:20px 0 14px;display:flex;gap:10px;flex-wrap:wrap;position:sticky;top:8px;z-index:5}.field{display:flex;flex:1;min-width:220px;position:relative}.field span{position:absolute;right:13px;top:11px}.field input{padding-right:40px}input,select{padding:12px 14px;border:1px solid #dce3dc;border-radius:12px;background:#fff;font:inherit}input{width:100%}input:focus,select:focus{outline:3px solid #315d3e22;border-color:#315d3e}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}.card{background:#fff;padding:18px;border-radius:20px;border:1px solid #e1e7e1;box-shadow:0 7px 24px #00000008}.place-card{overflow:hidden;padding:0;display:flex;flex-direction:column}.place-image{height:170px;background:linear-gradient(135deg,#dce9df,#f4f7f2);display:flex;align-items:center;justify-content:center;font-size:54px;overflow:hidden}.place-image img{width:100%;height:100%;object-fit:cover}.place-body{padding:18px}.place-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.place-top h3{margin:0;font-size:19px}.icon{font-size:28px}.place-body p{color:#58635a;line-height:1.7;margin:9px 0 0}.tag{display:inline-block;margin-top:12px;padding:6px 9px;border-radius:9px;background:#edf4ed;color:#315d3e;font-size:12px;font-weight:800}.actions-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.mini{border:1px solid #dce3dc;background:#f8faf8;color:#244a31;padding:9px 11px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:800;cursor:pointer}.mini:hover{background:#edf4ed}
+.empty{text-align:center;padding:35px;color:#667066}.loading{text-align:center;padding:28px;color:#667066}.status{font-size:13px;color:#687168;margin-top:10px}.section-title{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:22px 0 10px}.section-title h2{margin:0}.section-title p{margin:0;color:#687168;font-size:13px}footer{text-align:center;margin-top:30px;color:#687168;font-size:13px}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.open{display:flex}.modal-box{background:#fff;max-width:620px;width:100%;max-height:90vh;overflow:auto;border-radius:24px;padding:22px;position:relative}.close{position:absolute;left:14px;top:14px;border:0;background:#eef2ee;border-radius:50%;width:38px;height:38px;font-size:20px;cursor:pointer}.modal-image{height:230px;border-radius:17px;background:#eef3ee;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:70px;margin-bottom:18px}.modal-image img{width:100%;height:100%;object-fit:cover}.modal-box h2{margin:0 45px 8px 0}.modal-box p{line-height:1.9;color:#58635a}.notice{padding:12px 14px;border-radius:12px;background:#f0f6f0;color:#315d3e;font-size:13px;margin-top:14px}
+@media(max-width:620px){main{padding:10px 11px 35px}.hero{padding:32px 20px}.stats{grid-template-columns:1fr 1fr 1fr}.stat{padding:11px 5px}.stat strong{font-size:20px}.place-image{height:150px}.toolbar{position:static}}
+</style></head>
 <body><main>
-<section class="hero"><span class="badge">🇲🇦 AtlasGo · Local Discovery</span><h1>اكتشف المغرب بطريقة أبسط</h1><p>أماكن، طبيعة، أنشطة وخدمات محلية في مكان واحد.</p><div class="actions"><a class="btn" href="#places">استكشف الأماكن</a><a class="btn alt" href="#how">كيف يعمل؟</a></div></section>
-<section id="places"><div class="toolbar"><input id="search" type="search" placeholder="ابحث عن مكان أو نشاط..."><select id="category"><option value="all">كل الفئات</option><option value="nature">طبيعة</option><option value="activity">أنشطة</option><option value="service">خدمات</option></select></div>
-<div id="loading" class="loading">جاري تحميل الأماكن...</div><div class="grid" id="grid"></div><div class="empty" id="empty" hidden>ما لقيناش نتائج مطابقة للبحث.</div><div id="status" class="status"></div></section>
-<section id="how" class="card" style="margin-top:18px"><h2>AtlasGo</h2><p>النسخة الأولى مربوطة بقاعدة بيانات Supabase. المرحلة التالية: صفحات تفصيلية، خريطة وتواصل مع أصحاب الأنشطة.</p></section>
-<footer>AtlasGo · V1 Foundation</footer>
+<section class="hero">
+<span class="badge">🇲🇦 AtlasGo · Local Discovery</span>
+<h1>اكتشف المغرب بطريقة أبسط</h1>
+<p>أماكن، طبيعة، أنشطة وخدمات محلية في مكان واحد. قلب، فلتر واكتشف معلومات المكان بسرعة.</p>
+<div class="actions"><a class="btn" href="#places">استكشف الأماكن</a><a class="btn alt" href="#how">كيف يعمل؟</a></div>
+</section>
+
+<div class="stats" aria-label="إحصائيات AtlasGo">
+<div class="stat"><strong id="totalCount">0</strong><span>مكان متاح</span></div>
+<div class="stat"><strong id="natureCount">0</strong><span>طبيعة</span></div>
+<div class="stat"><strong id="activityCount">0</strong><span>أنشطة</span></div>
+</div>
+
+<section id="places">
+<div class="section-title"><div><h2>اكتشف الأماكن</h2><p>نتائج محدثة من قاعدة بيانات AtlasGo</p></div></div>
+<div class="toolbar">
+<div class="field"><span>🔎</span><input id="search" type="search" autocomplete="off" placeholder="ابحث عن مكان، نشاط أو منطقة..." aria-label="البحث"></div>
+<select id="category" aria-label="الفئة"><option value="all">كل الفئات</option><option value="nature">🏔️ طبيعة</option><option value="activity">🥾 أنشطة</option><option value="service">🏡 خدمات</option></select>
+</div>
+<div id="loading" class="loading">جاري تحميل الأماكن...</div>
+<div class="grid" id="grid"></div>
+<div class="empty" id="empty" hidden>ما لقيناش نتائج مطابقة للبحث.</div>
+<div id="status" class="status" aria-live="polite"></div>
+</section>
+
+<section id="how" class="card" style="margin-top:20px">
+<h2>كيف يعمل AtlasGo؟</h2>
+<p style="color:#58635a;line-height:1.8">كنجمعو معلومات الأماكن في قاعدة بيانات واحدة، ومن بعد كتقدر تبحث حسب الاسم أو المنطقة أو الفئة. إذا كان المكان عندو إحداثيات أو رابط تواصل، غادي تلقاهم مباشرة في البطاقة.</p>
+<div class="notice">النسخة الحالية V1: البحث + الفئات + الصور + التفاصيل + الخريطة + روابط التواصل + Supabase.</div>
+</section>
+<footer>AtlasGo · V1</footer>
 </main>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<div class="modal-box"><button class="close" id="closeModal" aria-label="إغلاق">×</button><div id="modalContent"></div></div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://oqhfvtdsagjktexwxbpl.supabase.co';
 const SUPABASE_KEY='sb_publishable_bCHLZuGNNuxs3mhzsjLa5A_ZJqwtmlW';
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const search=document.getElementById('search'),category=document.getElementById('category'),grid=document.getElementById('grid'),empty=document.getElementById('empty'),loading=document.getElementById('loading'),status=document.getElementById('status');
+const modal=document.getElementById('modal'),modalContent=document.getElementById('modalContent');
 let places=[];
 const icons={nature:'🏔️',activity:'🥾',service:'🏡'};
 const labels={nature:'طبيعة',activity:'أنشطة',service:'خدمات'};
+
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function safeUrl(v){try{const u=new URL(v);return ['http:','https:'].includes(u.protocol)?u.href:null}catch{return null}}
+function mapUrl(p){if(Number.isFinite(Number(p.latitude))&&Number.isFinite(Number(p.longitude)))return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.latitude+','+p.longitude);return null}
+function imageHtml(p,modal=false){const url=safeUrl(p.image_url);return url?'<img src="'+escapeHtml(url)+'" alt="'+escapeHtml(p.name)+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.innerHTML=\'<span>'+escapeHtml(icons[p.category]||'📍')+'</span>\'">':'<span>'+escapeHtml(icons[p.category]||'📍')+'</span>'}
+
 function render(){
  const q=search.value.trim().toLowerCase(),c=category.value;
  const filtered=places.filter(p=>(c==='all'||p.category===c)&&((p.name+' '+p.description+' '+p.region).toLowerCase().includes(q)));
- grid.innerHTML=filtered.map(p=>'<article class="card"><div class="icon">'+(icons[p.category]||'📍')+'</div><h3>'+escapeHtml(p.name)+'</h3><p>'+escapeHtml(p.description)+'</p><span class="tag">'+(labels[p.category]||'مكان')+(p.region?' · '+escapeHtml(p.region):'')+'</span></article>').join('');
+ grid.innerHTML=filtered.map((p,i)=>{
+  const map=mapUrl(p),contact=safeUrl(p.contact_url);
+  return '<article class="card place-card"><div class="place-image">'+imageHtml(p)+'</div><div class="place-body"><div class="place-top"><h3>'+escapeHtml(p.name)+'</h3><span class="icon">'+(icons[p.category]||'📍')+'</span></div><p>'+escapeHtml(p.description)+'</p><span class="tag">'+(labels[p.category]||'مكان')+(p.region?' · '+escapeHtml(p.region):'')+'</span><div class="actions-row"><button class="mini" data-details="'+i+'">التفاصيل</button>'+(map?'<a class="mini" target="_blank" rel="noopener" href="'+escapeHtml(map)+'">📍 الخريطة</a>':'')+(contact?'<a class="mini" target="_blank" rel="noopener" href="'+escapeHtml(contact)+'">تواصل</a>':'')+'</div></div></article>'
+ }).join('');
+ grid.querySelectorAll('[data-details]').forEach(btn=>btn.addEventListener('click',()=>openDetails(filtered[Number(btn.dataset.details)])));
  empty.hidden=filtered.length!==0;loading.style.display='none';
+ document.getElementById('totalCount').textContent=places.length;
+ document.getElementById('natureCount').textContent=places.filter(p=>p.category==='nature').length;
+ document.getElementById('activityCount').textContent=places.filter(p=>p.category==='activity').length;
 }
-function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+function openDetails(p){
+ const map=mapUrl(p),contact=safeUrl(p.contact_url);
+ modalContent.innerHTML='<div class="modal-image">'+imageHtml(p,true)+'</div><h2 id="modalTitle">'+escapeHtml(p.name)+'</h2><span class="tag">'+(labels[p.category]||'مكان')+(p.region?' · '+escapeHtml(p.region):'')+'</span><p>'+escapeHtml(p.description)+'</p><div class="actions-row">'+(map?'<a class="btn" target="_blank" rel="noopener" href="'+escapeHtml(map)+'">فتح في الخريطة</a>':'')+(contact?'<a class="mini" target="_blank" rel="noopener" href="'+escapeHtml(contact)+'">رابط التواصل</a>':'')+'</div>';
+ modal.classList.add('open');document.body.style.overflow='hidden';
+}
+function closeModal(){modal.classList.remove('open');document.body.style.overflow=''}
+document.getElementById('closeModal').addEventListener('click',closeModal);
+modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+search.addEventListener('input',render);category.addEventListener('change',render);
+
 async function loadPlaces(){
  const {data,error}=await db.from('atlas_places').select('id,name,category,description,region,latitude,longitude,image_url,contact_url').order('created_at',{ascending:false});
- if(error){status.textContent='تعذر تحميل البيانات من الخادم.';loading.textContent='استعمل النسخة التجريبية المحلية.';places=[
- {name:'الطبيعة والجبال',category:'nature',description:'اكتشف الوديان والجبال والمناظر الطبيعية.',region:'المغرب'},
- {name:'المغامرات والأنشطة',category:'activity',description:'أفكار للمشي والاستكشاف وتجارب محلية.',region:'المغرب'},
- {name:'الإقامة والمطاعم والنقل',category:'service',description:'خدمات يحتاجها الزائر أثناء الرحلة.',region:'المغرب'}
- ];render();return}
+ if(error){
+  status.textContent='تعذر تحميل البيانات من الخادم — النسخة التجريبية مفعلة.';
+  places=[
+   {name:'الطبيعة والجبال',category:'nature',description:'اكتشف الوديان والجبال والمناظر الطبيعية.',region:'المغرب'},
+   {name:'المغامرات والأنشطة',category:'activity',description:'أفكار للمشي والاستكشاف وتجارب محلية.',region:'المغرب'},
+   {name:'الإقامة والمطاعم والنقل',category:'service',description:'خدمات يحتاجها الزائر أثناء الرحلة.',region:'المغرب'}
+  ];render();return;
+ }
  places=data||[];render();status.textContent='البيانات متصلة بـ Supabase ✓';
 }
-search.addEventListener('input',render);category.addEventListener('change',render);loadPlaces();
+loadPlaces();
 </script></body></html>
