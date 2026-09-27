@@ -1,1 +1,34 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>مخطط الرحلات — المغرب</title><style>body{font-family:system-ui,sans-serif;margin:0;background:#f7f5f0;color:#171717}main{max-width:850px;margin:auto;padding:28px 16px}.box{background:#fff;padding:24px;border-radius:22px;box-shadow:0 8px 30px #0000000c}label{display:block;margin-top:12px}input,select{width:100%;box-sizing:border-box;padding:12px;border:1px solid #ddd;border-radius:12px;font:inherit}button{margin-top:18px;padding:12px 18px;border:0;border-radius:12px;background:#111;color:#fff}.result{margin-top:20px;padding:18px;background:#f2f2f2;border-radius:16px;line-height:1.8}</style></head><body><main><div class="box"><h1>مخطط رحلتك داخل المغرب</h1><p>MVP: حدد المدة والميزانية ونوع الرحلة لتحصل على خطة أولية.</p><label>عدد الأيام</label><input id="days" type="number" min="1" value="3"><label>الميزانية (DH)</label><input id="budget" type="number" min="0" value="1500"><label>نوع الرحلة</label><select id="type"><option>الطبيعة</option><option>المغامرة</option><option>الثقافة</option><option>الاسترخاء</option></select><button onclick="plan()">أنشئ الخطة</button><div id="result" class="result" hidden></div></div></main><script>function plan(){var d=+document.getElementById('days').value,b=+document.getElementById('budget').value,t=document.getElementById('type').value,day=d?Math.round(b/d):0;var r=document.getElementById('result');r.hidden=false;r.innerHTML='<strong>خطة أولية</strong><br>المدة: '+d+' أيام<br>الميزانية: '+b+' DH<br>النوع: '+t+'<br>ميزانية تقريبية لليوم: '+day+' DH<br><br>الخطوة التالية: ربط قاعدة بيانات الأماكن والأسعار ومولد خطط ذكي.';}</script></body></html>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>رحلتي المغرب — مخطط رحلة ذكي</title>
+<meta name="description" content="رحلتي المغرب: خطط رحلة داخل المغرب حسب الأيام والميزانية وعدد الأشخاص ونوع التجربة.">
+<link rel="stylesheet" href="./styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+<div class="brand">🧭 رحلتي <span>المغرب</span></div>
+<div class="badge">V1 • Micro-Niche</div>
+<h1>خطط رحلتك داخل المغرب في دقائق</h1>
+<p>أدخل الأيام والميزانية وعدد الأشخاص ونوع الرحلة، وخذ مساراً أولياً مع ميزانية يومية وChecklist جاهز.</p>
+</div></header>
+<main class="wrap">
+<section class="panel">
+<h2>صمّم رحلتك</h2>
+<div class="grid">
+<label>عدد الأيام<input id="days" type="number" min="1" max="30" value="3"></label>
+<label>الميزانية الإجمالية (DH)<input id="budget" type="number" min="0" value="1500"></label>
+<label>عدد الأشخاص<input id="people" type="number" min="1" max="20" value="2"></label>
+<label>نوع الرحلة<select id="type"><option value="nature">🌿 الطبيعة</option><option value="adventure">🥾 المغامرة</option><option value="culture">🏛️ الثقافة</option><option value="relaxation">🌊 الاسترخاء</option></select></label>
+</div>
+<button id="planBtn">أنشئ خطتي</button>
+<div id="status" class="status" aria-live="polite">جاهز</div>
+</section>
+<section id="result" class="result" hidden></section>
+<section class="panel"><div class="sectionHead"><h2>أماكن مقترحة</h2><span id="dbBadge">Supabase …</span></div><div id="places" class="places"></div></section>
+</main>
+<footer class="wrap foot">رحلتي المغرب — أداة تخطيط بسيطة، وليست منصة حجز.</footer>
+<script src="./app.js"></script>
+</body></html>
