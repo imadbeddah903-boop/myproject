@@ -1,1 +1,72 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>وصف المنتجات — المغرب</title><style>body{font-family:system-ui,sans-serif;margin:0;background:#f6f7fb;color:#161616}main{max-width:850px;margin:auto;padding:28px 16px}.box{background:#fff;padding:24px;border-radius:22px;box-shadow:0 8px 28px #0000000b}textarea,input{width:100%;box-sizing:border-box;padding:12px;margin:7px 0 14px;border:1px solid #ddd;border-radius:12px;font:inherit}button{padding:12px 18px;border:0;border-radius:12px;background:#111;color:#fff}.out{white-space:pre-wrap;background:#f3f3f3;padding:16px;border-radius:14px;margin-top:16px}</style></head><body><main><div class="box"><h1>مولّد وصف المنتجات</h1><p>MVP مستقل للتاجر: أدخل معلومات المنتج وأنشئ مسودة وصف بالعربية والفرنسية ومنشور WhatsApp.</p><label>اسم المنتج</label><input id="name" placeholder="مثال: حقيبة جلدية"><label>الثمن</label><input id="price" placeholder="199 DH"><label>معلومات المنتج</label><textarea id="info" rows="5" placeholder="الخامة، المقاس، المميزات..."></textarea><button onclick="generate()">إنشاء المسودة</button><div id="out" class="out" hidden></div></div></main><script>function generate(){var n=document.getElementById('name').value||'المنتج',p=document.getElementById('price').value||'',i=document.getElementById('info').value||'';document.getElementById('out').hidden=false;document.getElementById('out').textContent='العربية:\n'+n+' — '+p+'\n'+i+'\nاطلب الآن عبر WhatsApp.\n\nFrançais:\n'+n+' — '+p+'\n'+i+'\nContactez-nous sur WhatsApp.';}</script></body></html>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="مولد وصف المنتجات للتجار المغاربة بالعربية والفرنسية وWhatsApp.">
+<title>Product Copy Morocco — مولد وصف المنتجات</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f5f7fb;color:#171a21}
+main{max-width:980px;margin:auto;padding:22px 16px 45px}.hero{background:linear-gradient(135deg,#20243a,#424a73);color:#fff;padding:30px 24px;border-radius:26px;box-shadow:0 15px 40px #0002}
+.badge{display:inline-block;padding:7px 11px;border-radius:999px;background:#ffffff18;border:1px solid #ffffff35;font-size:13px}
+h1{font-size:clamp(30px,6vw,50px);margin:17px 0 10px;line-height:1.08}.hero p{line-height:1.8;color:#e6e8f0}
+.panel{background:#fff;border:1px solid #e3e6ee;border-radius:20px;padding:20px;margin-top:16px;box-shadow:0 7px 24px #00000008}
+label{display:block;font-weight:700;margin:12px 0 6px}input,textarea,select{width:100%;padding:12px 13px;border:1px solid #d9dde6;border-radius:11px;font:inherit;background:#fff}textarea{resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+button{border:0;border-radius:12px;padding:12px 17px;background:#20243a;color:#fff;font-weight:700;cursor:pointer}button.secondary{background:#eef0f6;color:#20243a}
+.result{display:none}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#eef0f6;color:#20243a}.tab.active{background:#20243a;color:#fff}
+.copybox{white-space:pre-wrap;line-height:1.8;background:#f7f8fb;border:1px solid #e1e4ec;padding:17px;border-radius:14px;min-height:130px}
+.small{color:#697181;font-size:13px}
+@media(max-width:650px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<section class="hero">
+<span class="badge">🇲🇦 Product Copy Morocco · MVP</span>
+<h1>وصف منتج جاهز للبيع</h1>
+<p>دخل معلومات بسيطة على المنتج، وخذ مسودة بالعربية، الفرنسية وWhatsApp. الهدف: ربح الوقت للتاجر المغربي.</p>
+</section>
+
+<section class="panel">
+<h2>معلومات المنتج</h2>
+<label for="name">اسم المنتج</label><input id="name" placeholder="مثال: حقيبة جلدية">
+<div class="row">
+<div><label for="price">الثمن</label><input id="price" placeholder="199 DH"></div>
+<div><label for="audience">الزبون المستهدف</label><select id="audience"><option>عام</option><option>نساء</option><option>رجال</option><option>أطفال</option></select></div>
+</div>
+<label for="info">المميزات والمعلومات</label>
+<textarea id="info" rows="5" placeholder="الخامة، اللون، المقاس، الضمان، التوصيل..."></textarea>
+<div class="actions"><button onclick="generate()">✨ أنشئ الوصف</button><button class="secondary" onclick="clearForm()">مسح</button></div>
+<p class="small">حالياً التوليد محلي داخل الصفحة؛ في المرحلة التالية نربط API للذكاء الاصطناعي.</p>
+</section>
+
+<section class="panel result" id="result">
+<h2>النتيجة</h2>
+<div class="tabs">
+<button class="tab active" data-tab="ar" onclick="showTab('ar')">العربية</button>
+<button class="tab" data-tab="fr" onclick="showTab('fr')">Français</button>
+<button class="tab" data-tab="wa" onclick="showTab('wa')">WhatsApp</button>
+</div>
+<div id="copybox" class="copybox"></div>
+<div class="actions"><button onclick="copyText()">📋 نسخ النص</button></div>
+<p id="status" class="small"></p>
+</section>
+</main>
+<script>
+let outputs={ar:'',fr:'',wa:''},current='ar';
+function generate(){
+ const n=document.getElementById('name').value.trim()||'منتج جديد';
+ const p=document.getElementById('price').value.trim();
+ const a=document.getElementById('audience').value;
+ const i=document.getElementById('info').value.trim()||'جودة مميزة وتصميم عملي';
+ outputs.ar='🛍️ '+n+'\n\nمنتج مناسب لـ'+a+'، مصمم للاستعمال اليومي بجودة ومواصفات مميزة.\n\n'+i+(p?'\n\n💰 الثمن: '+p:'')+'\n🚚 التوصيل متوفر حسب المنطقة.\n📩 تواصل معنا للطلب والاستفسار.';
+ outputs.fr='🛍️ '+n+'\n\nUn produit pratique et adapté à '+a+', avec des caractéristiques pensées pour un usage quotidien.\n\n'+i+(p?'\n\n💰 Prix : '+p:'')+'\n🚚 Livraison selon la région.\n📩 Contactez-nous pour commander.';
+ outputs.wa='🔥 '+n+'\n\n'+i+(p?'\n💰 '+p:'')+'\n\n🚚 Livraison disponible.\n📲 Pour commander, envoyez-nous un message sur WhatsApp.';
+ document.getElementById('result').style.display='block';showTab('ar');
+}
+function showTab(tab){current=tab;document.getElementById('copybox').textContent=outputs[tab];document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));document.getElementById('status').textContent=''}
+async function copyText(){try{await navigator.clipboard.writeText(outputs[current]);document.getElementById('status').textContent='تم نسخ النص ✓'}catch(e){document.getElementById('status').textContent='ما قدرناش ننسخو تلقائياً؛ حدده وانسخه يدوياً.'}}
+function clearForm(){['name','price','info'].forEach(id=>document.getElementById(id).value='');document.getElementById('result').style.display='none'}
+</script>
+</body>
+</html>
