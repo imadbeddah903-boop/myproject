@@ -3,10 +3,11 @@ const SUPABASE_KEY="sb_publishable_bCHLZuGNNuxs3mhzsjLa5A_ZJqwtmlW";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let places=[];
 
-
 const labels={nature:"الطبيعة",adventure:"المغامرة",culture:"الثقافة",relaxation:"الاسترخاء"};
 const icons={nature:"🌿",adventure:"🥾",culture:"🏛️",relaxation:"🌊"};
 const regions=["طنجة-تطوان-الحسيمة","الشرق","فاس-مكناس","الرباط-سلا-القنيطرة","بني ملال-خنيفرة","الدار البيضاء-سطات","مراكش-آسفي","درعة-تافيلالت","سوس-ماسة","كلميم-واد نون","العيون-الساقية الحمراء","الداخلة-وادي الذهب"];
+const travelModes={flight:"✈️ طائرة",car:"🚗 سيارة",train:"🚆 قطار",bus:"🚌 حافلة",ferry:"🚢 عبّارة / باخرة",mixed:"🔄 مختلط"};
+const googleMode={car:"driving",train:"transit",bus:"transit",mixed:"transit"};
 
 const moroccoDestinations=[
 ["طنجة","طنجة-تطوان-الحسيمة","culture","مدينة ساحلية بإطلالات على مضيق جبل طارق",350],
@@ -17,7 +18,7 @@ const moroccoDestinations=[
 ["فاس","فاس-مكناس","culture","المدينة العتيقة والأسواق والحرف",350],
 ["مكناس","فاس-مكناس","culture","تراث تاريخي وأسوار ومعالم",300],
 ["إفران","فاس-مكناس","nature","غابات الأطلس المتوسط وأجواء جبلية",350],
-["الرباط","الرباط-سلا-القنيطرة","culture","العاصمة، المدينة القديمة والمعالم الثقافية",350],
+["الرباط","الرباط-سلا-القنيطرة","culture","العاصمة والمعالم الثقافية",350],
 ["القنيطرة","الرباط-سلا-القنيطرة","nature","مناطق طبيعية وقرب الساحل",280],
 ["أزيلال","بني ملال-خنيفرة","adventure","جبال وشلالات ومسارات طبيعية",400],
 ["بني ملال","بني ملال-خنيفرة","nature","جبال ومناطق خضراء",300],
@@ -40,13 +41,11 @@ const moroccoDestinations=[
 ];
 
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const mapsUrl=name=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(name+", Morocco");
-const mapsDir=(name,origin="",mode="driving")=> "https://www.google.com/maps/dir/?api=1"+(origin?"&origin="+encodeURIComponent(origin):"")+"&destination="+encodeURIComponent(name)+(mode?"&travelmode="+encodeURIComponent(mode):"");
-const travelModes={flight:"✈️ طائرة",car:"🚗 سيارة",motorcycle:"🏍️ موتور",train:"🚆 قطار",bus:"🚌 حافلة",ferry:"🚢 عبّارة / باخرة",mixed:"🔄 مختلط"};
-const googleMode={car:"driving",motorcycle:"two-wheeler",train:"transit",bus:"transit",mixed:"transit"};
+const mapsUrl=name=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(name);
+const mapsDir=(name,origin="",mode="")=>"https://www.google.com/maps/dir/?api=1"+(origin?"&origin="+encodeURIComponent(origin):"")+"&destination="+encodeURIComponent(name)+(mode?"&travelmode="+mode:"");
 
-function mergePlaces(dbRows){
- const db=(dbRows||[]).map(p=>({...p,source:"db"}));
+function mergePlaces(rows){
+ const db=(rows||[]).map(p=>({...p,source:"db"}));
  const existing=new Set(db.map(p=>String(p.name).trim().toLowerCase()));
  const local=moroccoDestinations.filter(x=>!existing.has(x[0].toLowerCase())).map((x,i)=>({id:"local-"+i,name:x[0],region:x[1],category:x[2],description:x[3],estimated_daily_cost_dh:x[4],source:"local"}));
  return [...db,...local];
@@ -55,12 +54,27 @@ function mergePlaces(dbRows){
 async function loadCountries(){
  try{
   const res=await fetch("https://restcountries.com/v3.1/all?fields=name");
-  const data=await res.json(); data.sort((x,y)=>(x.name.common||"").localeCompare(y.name.common||""));
-  const options=data.map(c=>"<option>"+esc(c.name.common)+"</option>").join("");
+  const data=await res.json();
+  data.sort((a,b)=>(a.name.common||"").localeCompare(b.name.common||""));
+  const options=data.map(c=>"<option value=\""+esc(c.name.common)+"\">"+esc(c.name.common)+"</option>").join("");
   document.querySelector("#country").innerHTML=options;
   document.querySelector("#startCountry").innerHTML=options;
+  document.querySelector("#country").value="Spain";
+  document.querySelector("#startCountry").value="Morocco";
  }catch(e){}
 }
+
+async function loadPlaces(){
+ const {data,error}=await sb.from("trip_planner_places").select("*").order("name");
+ places=mergePlaces(data||[]);
+ document.querySelector("#dbBadge").textContent=error?"Mode hybride":"Supabase ✓ + اقتراحات";
+ renderPlaces();
+}
+
+function renderPlaces(){
+ document.querySelector("#places").innerHTML=places.map(p=>'<article class="place"><div class="placeTop"><span class="tag">'+icons[p.category]+' '+esc(labels[p.category]||p.category)+'</span><span class="region">'+esc(p.region)+'</span></div><h3>'+esc(p.name)+'</h3><p class="muted">'+esc(p.description)+'</p><strong>تقدير يومي: '+Number(p.estimated_daily_cost_dh||0).toLocaleString("ar-MA")+' DH</strong><div class="placeActions"><a target="_blank" rel="noopener" href="'+mapsUrl(p.name)+'">📍 Google Maps</a></div></article>').join("");
+}
+
 function routeInfo(){
  const sc=document.querySelector("#startCountry").value;
  const dc=document.querySelector("#country").value;
@@ -68,22 +82,10 @@ function routeInfo(){
  const d=document.querySelector("#destination").value.trim();
  const mode=document.querySelector("#transport").value;
  const box=document.querySelector("#routeSummary");
- if(!s||!d){box.innerHTML="<div class=\"notice\">دخل مدينة الانطلاق ومدينة الوجهة باش يظهر لك المسار.</div>";return;}
- const origin=s+", "+sc;
- const dest=d+", "+dc;
- const gm=mode==="flight"?"":(googleMode[mode]||"driving");
- const url=mapsDir(dest,origin,gm);
- box.innerHTML="<div class=\"routeCard\"><div><b>"+esc(origin)+" → "+esc(dest)+"</b><p class=\"muted\">"+esc(travelModes[mode])+" • Google Maps يعرض المسافة ووقت التنقل المتاح للمسار.</p></div><a class=\"mapAll\" target=\"_blank\" rel=\"noopener\" href=\""+url+"\">🗺️ افتح المسار</a></div>";
-}
-async function loadPlaces(){
- const {data,error}=await sb.from("trip_planner_places").select("*").order("name");
- places=mergePlaces(data||[]);
- document.querySelector("#dbBadge").textContent=error?"Mode hybride":"Supabase ✓ + المغرب كامل";
- renderPlaces();
-}
-
-function renderPlaces(){
- document.querySelector("#places").innerHTML=places.map(p=>'<article class="place"><div class="placeTop"><span class="tag">'+icons[p.category]+' '+esc(labels[p.category]||p.category)+'</span><span class="region">'+esc(p.region)+'</span></div><h3>'+esc(p.name)+'</h3><p class="muted">'+esc(p.description)+'</p><strong>تقدير يومي: '+Number(p.estimated_daily_cost_dh||0).toLocaleString("ar-MA")+' DH</strong><div class="placeActions"><a target="_blank" rel="noopener" href="'+mapsUrl(p.name)+'">📍 Google Maps</a><a target="_blank" rel="noopener" href="'+mapsDir(p.name)+'">🧭 الاتجاهات</a></div></article>').join("");
+ if(!s||!d){box.innerHTML='<div class="notice">دخل مدينة الانطلاق ومدينة الوجهة باش يظهر لك المسار.</div>';return;}
+ const origin=s+", "+sc, dest=d+", "+dc;
+ const url=mapsDir(dest,origin,googleMode[mode]||"");
+ box.innerHTML='<div class="routeCard"><div><b>'+esc(origin)+' → '+esc(dest)+'</b><p class="muted">'+esc(travelModes[mode])+' • Google Maps يقدر يبيّن المسافة ووقت التنقل المتاح للمسار.</p></div><a class="mapAll" target="_blank" rel="noopener" href="'+url+'">🗺️ افتح المسار</a></div>';
 }
 
 function scorePlace(p,type,region,budgetPerDay){
@@ -108,23 +110,26 @@ function plan(){
  const destination=(document.querySelector("#destination").value||"").trim();
  const subregion=(document.querySelector("#subregion").value||"").trim();
  const transport=document.querySelector("#transport").value;
- const budgetPerDay=d?b/d:0;
+ const budgetPerDay=b/d;
  const ranked=[...places].sort((a,z)=>scorePlace(z,type,region,budgetPerDay)-scorePlace(a,type,region,budgetPerDay));
  const chosen=ranked.filter(p=>region==="all"||p.region===region).slice(0,Math.max(1,Math.min(d,8)));
  const finalPlaces=chosen.length?chosen:ranked.slice(0,Math.max(1,Math.min(d,8)));
- const daily=Math.floor(b/d),perPerson=Math.floor(b/n),perPersonDay=Math.floor(b/(n*d));
- const transportText=travelModes[transport]||transport;
+ const daily=Math.floor(b/d),perPersonDay=Math.floor(b/(n*d));
  let daysHtml="";
  for(let i=1;i<=d;i++){
-   const p=finalPlaces[(i-1)%finalPlaces.length];
-   daysHtml+='<div class="day"><div class="dayHead"><strong>اليوم '+i+'</strong><a target="_blank" rel="noopener" href="'+mapsDir(p.name)+'">🧭 افتح المسار</a></div><h3>'+icons[p.category]+' '+esc(p.name)+'</h3><div class="time">08:00–10:00 • فطور وتجهيز</div><div class="time">10:30–15:30 • '+esc(labels[p.category])+' واكتشاف '+esc(p.name)+'</div><div class="time">16:00–19:00 • وقت حر / نشاط إضافي</div><div class="time">20:00–22:00 • عشاء وراحة</div><div class="dayButtons"><a target="_blank" rel="noopener" href="'+mapsUrl(p.name)+'">📍 Google Maps</a></div></div>';
+  const p=finalPlaces[(i-1)%finalPlaces.length];
+  daysHtml+='<div class="day"><div class="dayHead"><strong>اليوم '+i+'</strong><a target="_blank" rel="noopener" href="'+mapsDir(p.name,[start,startCountry].filter(Boolean).join(", "),googleMode[transport]||"")+'">🧭 افتح المسار</a></div><h3>'+icons[p.category]+' '+esc(p.name)+'</h3><div class="time">08:00–10:00 • فطور وتجهيز</div><div class="time">10:30–15:30 • '+esc(labels[p.category])+' واكتشاف '+esc(p.name)+'</div><div class="time">16:00–19:00 • وقت حر / نشاط إضافي</div><div class="time">20:00–22:00 • عشاء وراحة</div></div>';
  }
- const checklist=["وثائق السفر والبطاقة","هاتف وشاحن وبطارية إضافية","ماء واحتياجات الطريق","ملابس مناسبة للطقس","حذاء مريح","حقيبة إسعافات أولية بسيطة","تأكيد أوقات العمل والطقس قبل الانطلاق"];
+ const checklist=["وثائق السفر","هاتف وشاحن وبطارية إضافية","ماء واحتياجات الطريق","ملابس مناسبة للطقس","حذاء مريح","تأمين/وثائق السفر عند الحاجة","تأكد من متطلبات الدخول والتأشيرة حسب الدولة","تأكد من أسعار وأوقات النقل قبل السفر"];
+ const target=destination?destination+", "+country:country;
+ const origin=start?start+", "+startCountry:"";
  const r=document.querySelector("#result");r.hidden=false;
- r.innerHTML='<div class="resultHead"><div><span class="badge">خطة مخصصة</span><h2>'+esc(start?start+" → ":"")+'المغرب</h2><p class="muted">'+icons[type]+' '+esc(labels[type])+' • '+esc(transportText)+(region!=="all"?" • "+esc(region):" • جميع الجهات")+'</p></div><a class="mapAll" target="_blank" rel="noopener" href="'+mapsUrl(region==="all"?"Morocco":region)+'">🗺️ افتح المغرب في Google Maps</a></div><div class="planGrid"><div class="stat"><b>'+d+'</b><br>أيام</div><div class="stat"><b>'+b.toLocaleString("ar-MA")+' DH</b><br>الميزانية</div><div class="stat"><b>'+n+'</b><br>أشخاص</div><div class="stat"><b>'+daily.toLocaleString("ar-MA")+' DH</b><br>تقريباً/اليوم</div><div class="stat"><b>'+perPersonDay.toLocaleString("ar-MA")+' DH</b><br>للشخص/اليوم</div></div><p class="notice">💡 التقديرات إرشادية وليست أسعار حجز. ثمن النقل والسكن والأنشطة يتغير حسب الموسم.</p><h3>🗺️ المسار المقترح</h3>'+daysHtml+'<h3>🎒 Checklist</h3>'+checklist.map(x=>'<div class="check">☐ '+esc(x)+'</div>').join("")+'<div class="resultActions"><button onclick="window.print()">🖨️ طبع / حفظ PDF</button></div>';
- document.querySelector("#status").textContent="تم إنشاء خطة تغطي المغرب حسب اختياراتك";
+ r.innerHTML='<div class="resultHead"><div><span class="badge">خطة مخصصة</span><h2>'+esc(origin?origin+" → ":"")+esc(target)+'</h2><p class="muted">'+icons[type]+' '+esc(labels[type])+' • '+esc(travelModes[transport])+(subregion?" • "+esc(subregion):"")+'</p></div><a class="mapAll" target="_blank" rel="noopener" href="'+mapsDir(target,origin,googleMode[transport]||"")+'">🗺️ افتح المسار</a></div><div class="planGrid"><div class="stat"><b>'+d+'</b><br>أيام</div><div class="stat"><b>'+b.toLocaleString("ar-MA")+' DH</b><br>الميزانية</div><div class="stat"><b>'+n+'</b><br>أشخاص</div><div class="stat"><b>'+daily.toLocaleString("ar-MA")+' DH</b><br>تقريباً/اليوم</div><div class="stat"><b>'+perPersonDay.toLocaleString("ar-MA")+' DH</b><br>للشخص/اليوم</div></div><p class="notice">💡 الأسعار والتكاليف إرشادية وليست أسعار حجز. Google Maps يمكنه عرض المسافة ووقت التنقل للمسارات المدعومة.</p><h3>🗺️ المسار المقترح</h3>'+daysHtml+'<h3>🎒 Checklist</h3>'+checklist.map(x=>'<div class="check">☐ '+esc(x)+'</div>').join("")+'<div class="resultActions"><button onclick="window.print()">🖨️ طبع / حفظ PDF</button></div>';
+ document.querySelector("#status").textContent="تم إنشاء خطة سفر عالمية حسب اختياراتك";
  r.scrollIntoView({behavior:"smooth",block:"start"});
+ routeInfo();
 }
+
 document.querySelector("#planBtn").addEventListener("click",plan);
 document.querySelector("#transport").addEventListener("change",routeInfo);
 document.querySelector("#start").addEventListener("input",routeInfo);
