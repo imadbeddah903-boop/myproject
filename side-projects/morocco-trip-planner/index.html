@@ -2,37 +2,37 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>رحلتي المغرب — مخطط سفر ذكي لكل المغرب</title>
-<meta name="description" content="رحلتي المغرب: خطط رحلة في جميع جهات المغرب حسب الأيام والميزانية والأشخاص ونوع التجربة، مع Google Maps وChecklist.">
+<title>TripPilot — مخطط سفر عالمي ذكي</title>
+<meta name="description" content="TripPilot: خطط رحلة لأي دولة حسب المدينة والجهة والميزانية ووسيلة النقل، مع Google Maps وChecklist.">
 <link rel="stylesheet" href="./styles.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <header class="hero"><div class="wrap">
-<div class="brand">🧭 رحلتي <span>المغرب</span></div>
-<div class="badge">V1.1 • جميع جهات المغرب</div>
-<h1>خطط رحلة في المغرب كامل في دقائق</h1>
-<p>من طنجة حتى الداخلة: دخل المدة والميزانية وعدد الأشخاص ونوع التجربة، وخذ مساراً أولياً، توزيعاً للميزانية، أماكن، Google Maps وChecklist.</p>
-<div class="heroPills"><span>🇲🇦 12 جهة</span><span>🗺️ Google Maps</span><span>💰 ميزانية ذكية</span><span>🎒 Checklist</span></div>
+<div class="brand">🧭 <span>TripPilot</span></div>
+<div class="badge">V2 • سفر عالمي</div>
+<h1>خطط رحلة لأي دولة في دقائق</h1>
+<p>اختار الدولة والمدينة والجهة، ثم حدد المدة والميزانية ووسيلة النقل. خذ مساراً أولياً، ميزانية، أماكن، Google Maps وChecklist.</p>
+<div class="heroPills"><span>🌍 دول العالم</span><span>🏙️ مدينة + جهة</span><span>✈️ طيران</span><span>🚢 عبّارة</span><span>🗺️ Google Maps</span><span>🎒 Checklist</span></div>
 </div></header>
 <main class="wrap">
 <section class="panel">
 <h2>صمّم رحلتك</h2>
 <div class="grid">
-<label>مدينة الانطلاق<input id="start" type="text" placeholder="مثال: مراكش"></label>
-<label>عدد الأيام<input id="days" type="number" min="1" max="30" value="3"></label>
+<label>دولة الانطلاق<select id="startCountry"><option value="Morocco">🇲🇦 المغرب</option></select></label><label>مدينة الانطلاق<input id="start" type="text" placeholder="مثال: Marrakech"></label>
+<label>دولة الوجهة<select id="country"><option value="Morocco">🇲🇦 المغرب</option></select></label><label>مدينة الوجهة<input id="destination" type="text" placeholder="مثال: Barcelona"></label><label>الجهة / المنطقة<input id="subregion" type="text" placeholder="مثال: Catalonia"></label><label>عدد الأيام<input id="days" type="number" min="1" max="30" value="3"></label>
 <label>الميزانية الإجمالية (DH)<input id="budget" type="number" min="0" value="1500"></label>
 <label>عدد الأشخاص<input id="people" type="number" min="1" max="20" value="2"></label>
 <label>نوع الرحلة<select id="type"><option value="nature">🌿 الطبيعة</option><option value="adventure">🥾 المغامرة</option><option value="culture">🏛️ الثقافة</option><option value="relaxation">🌊 الاسترخاء</option></select></label>
 <label>جهة مفضلة<select id="region"><option value="all">🇲🇦 المغرب كامل</option><option>طنجة-تطوان-الحسيمة</option><option>الشرق</option><option>فاس-مكناس</option><option>الرباط-سلا-القنيطرة</option><option>بني ملال-خنيفرة</option><option>الدار البيضاء-سطات</option><option>مراكش-آسفي</option><option>درعة-تافيلالت</option><option>سوس-ماسة</option><option>كلميم-واد نون</option><option>العيون-الساقية الحمراء</option><option>الداخلة-وادي الذهب</option></select></label>
-<label>التنقل<select id="transport"><option value="car">🚗 سيارة</option><option value="train">🚆 قطار</option><option value="bus">🚌 حافلة</option><option value="mixed">🔄 مختلط</option></select></label>
+<label>التنقل<select id="transport"><option value="flight">✈️ طائرة</option><option value="car">🚗 سيارة</option><option value="motorcycle">🏍️ موتور</option><option value="train">🚆 قطار</option><option value="bus">🚌 حافلة</option><option value="ferry">🚢 عبّارة / باخرة</option><option value="mixed">🔄 مختلط</option></select></label>
 </div>
 <button id="planBtn">✨ أنشئ خطتي</button>
 <div id="status" class="status" aria-live="polite">جاهز</div>
 </section>
 <section id="result" class="result" hidden></section>
-<section class="panel"><div class="sectionHead"><h2>وجهات من المغرب كامل</h2><span id="dbBadge">Supabase …</span></div><div id="places" class="places"></div></section>
+<section class="panel"><div class="sectionHead"><h2>وجهات واقتراحات سفر</h2><span id="dbBadge">Supabase …</span></div><div id="places" class="places"></div></section><section class="panel"><h2>🌍 السفر الدولي</h2><p class="muted">مثال: المغرب → إسبانيا. حدد المدن ووسيلة النقل ثم افتح Google Maps لمعرفة المسافة والمدة المتاحة للمسار.</p><div id="routeSummary" class="routeSummary"></div></section>
 </main>
-<footer class="wrap foot">رحلتي المغرب — أداة تخطيط وليست منصة حجز. التكاليف تقريبية ويجب التأكد من الأسعار والأوقات قبل السفر.</footer>
+<footer class="wrap foot">TripPilot — أداة تخطيط وليست منصة حجز. الأسعار والأوقات والمسافات تقديرية أو يعرضها مزود الخرائط، ويجب التحقق منها قبل السفر.</footer>
 <script src="./app.js"></script>
 </body></html>
