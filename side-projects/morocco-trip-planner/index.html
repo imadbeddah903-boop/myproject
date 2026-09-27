@@ -2,33 +2,37 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>رحلتي المغرب — مخطط رحلة ذكي</title>
-<meta name="description" content="رحلتي المغرب: خطط رحلة داخل المغرب حسب الأيام والميزانية وعدد الأشخاص ونوع التجربة.">
+<title>رحلتي المغرب — مخطط سفر ذكي لكل المغرب</title>
+<meta name="description" content="رحلتي المغرب: خطط رحلة في جميع جهات المغرب حسب الأيام والميزانية والأشخاص ونوع التجربة، مع Google Maps وChecklist.">
 <link rel="stylesheet" href="./styles.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <header class="hero"><div class="wrap">
 <div class="brand">🧭 رحلتي <span>المغرب</span></div>
-<div class="badge">V1 • Micro-Niche</div>
-<h1>خطط رحلتك داخل المغرب في دقائق</h1>
-<p>أدخل الأيام والميزانية وعدد الأشخاص ونوع الرحلة، وخذ مساراً أولياً مع ميزانية يومية وChecklist جاهز.</p>
+<div class="badge">V1.1 • جميع جهات المغرب</div>
+<h1>خطط رحلة في المغرب كامل في دقائق</h1>
+<p>من طنجة حتى الداخلة: دخل المدة والميزانية وعدد الأشخاص ونوع التجربة، وخذ مساراً أولياً، توزيعاً للميزانية، أماكن، Google Maps وChecklist.</p>
+<div class="heroPills"><span>🇲🇦 12 جهة</span><span>🗺️ Google Maps</span><span>💰 ميزانية ذكية</span><span>🎒 Checklist</span></div>
 </div></header>
 <main class="wrap">
 <section class="panel">
 <h2>صمّم رحلتك</h2>
 <div class="grid">
+<label>مدينة الانطلاق<input id="start" type="text" placeholder="مثال: مراكش"></label>
 <label>عدد الأيام<input id="days" type="number" min="1" max="30" value="3"></label>
 <label>الميزانية الإجمالية (DH)<input id="budget" type="number" min="0" value="1500"></label>
 <label>عدد الأشخاص<input id="people" type="number" min="1" max="20" value="2"></label>
 <label>نوع الرحلة<select id="type"><option value="nature">🌿 الطبيعة</option><option value="adventure">🥾 المغامرة</option><option value="culture">🏛️ الثقافة</option><option value="relaxation">🌊 الاسترخاء</option></select></label>
+<label>جهة مفضلة<select id="region"><option value="all">🇲🇦 المغرب كامل</option><option>طنجة-تطوان-الحسيمة</option><option>الشرق</option><option>فاس-مكناس</option><option>الرباط-سلا-القنيطرة</option><option>بني ملال-خنيفرة</option><option>الدار البيضاء-سطات</option><option>مراكش-آسفي</option><option>درعة-تافيلالت</option><option>سوس-ماسة</option><option>كلميم-واد نون</option><option>العيون-الساقية الحمراء</option><option>الداخلة-وادي الذهب</option></select></label>
+<label>التنقل<select id="transport"><option value="car">🚗 سيارة</option><option value="train">🚆 قطار</option><option value="bus">🚌 حافلة</option><option value="mixed">🔄 مختلط</option></select></label>
 </div>
-<button id="planBtn">أنشئ خطتي</button>
+<button id="planBtn">✨ أنشئ خطتي</button>
 <div id="status" class="status" aria-live="polite">جاهز</div>
 </section>
 <section id="result" class="result" hidden></section>
-<section class="panel"><div class="sectionHead"><h2>أماكن مقترحة</h2><span id="dbBadge">Supabase …</span></div><div id="places" class="places"></div></section>
+<section class="panel"><div class="sectionHead"><h2>وجهات من المغرب كامل</h2><span id="dbBadge">Supabase …</span></div><div id="places" class="places"></div></section>
 </main>
-<footer class="wrap foot">رحلتي المغرب — أداة تخطيط بسيطة، وليست منصة حجز.</footer>
+<footer class="wrap foot">رحلتي المغرب — أداة تخطيط وليست منصة حجز. التكاليف تقريبية ويجب التأكد من الأسعار والأوقات قبل السفر.</footer>
 <script src="./app.js"></script>
 </body></html>
