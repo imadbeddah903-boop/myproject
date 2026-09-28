@@ -1,0 +1,3 @@
+# Google AdSense
+# Placeholder only — replace pub-XXXXXXXXXXXXXXXX with the real Publisher ID before enabling AdSense.
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0

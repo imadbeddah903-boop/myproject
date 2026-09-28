@@ -1,0 +1,2 @@
+/* Sentry browser monitoring placeholder. Disabled until a real DSN is configured. */
+(function(){'use strict';var SENTRY_DSN='';var ENABLED=false;if(!ENABLED||!SENTRY_DSN){return}var s=document.createElement('script');s.src='https://browser.sentry-cdn.com/8.42.0/bundle.min.js';s.crossOrigin='anonymous';s.onload=function(){if(window.Sentry)window.Sentry.init({dsn:SENTRY_DSN,tracesSampleRate:0.1})};document.head.appendChild(s)})();
