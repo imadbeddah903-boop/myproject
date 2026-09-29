@@ -22,6 +22,8 @@ type ProcessRequest = {
   projectId?: string;
   userId?: string;
   scenes: Scene[];
+  resolution?: '360p' | '720p' | '1k' | '2k' | '4k';
+  aspect_ratio?: '16:9' | '9:16' | '4:3' | '1:1' | '3:4';
 };
 
 const app = new Hono();
@@ -236,10 +238,52 @@ function safeFileName(value: string): string {
   return value.replace(/[^a-zA-Z0-9._-]/g, '_');
 }
 
+function resolveRenderDimensions(
+  resolution: ProcessRequest['resolution'],
+  aspectRatio: ProcessRequest['aspect_ratio']
+): { width: number; height: number; resolution: string; aspect_ratio: string } {
+  const profiles: Record<string, { width: number; height: number }> = {
+    '360p': { width: 640, height: 360 },
+    '720p': { width: 1280, height: 720 },
+    '1k': { width: 1024, height: 1024 },
+    '2k': { width: 2048, height: 2048 },
+    '4k': { width: 3840, height: 2160 }
+  };
+  const ratios: Record<string, [number, number]> = {
+    '16:9': [16, 9],
+    '9:16': [9, 16],
+    '4:3': [4, 3],
+    '1:1': [1, 1],
+    '3:4': [3, 4]
+  };
+  const r = profiles[resolution || '720p'] ? (resolution || '720p') : '720p';
+  const ar = ratios[aspectRatio || '16:9'] ? (aspectRatio || '16:9') : '16:9';
+  if (r === '1k' || r === '2k') {
+    const longEdge = r === '1k' ? 1024 : 2048;
+    const [rw, rh] = ratios[ar];
+    const width = rw >= rh ? longEdge : Math.round(longEdge * rw / rh);
+    const height = rw >= rh ? Math.round(longEdge * rh / rw) : longEdge;
+    return { width: width % 2 ? width + 1 : width, height: height % 2 ? height + 1 : height, resolution: r, aspect_ratio: ar };
+  }
+  if (r === '4k') {
+    const [rw, rh] = ratios[ar];
+    const longEdge = 3840;
+    const width = rw >= rh ? longEdge : Math.round(longEdge * rw / rh);
+    const height = rw >= rh ? Math.round(longEdge * rh / rw) : longEdge;
+    return { width: width % 2 ? width + 1 : width, height: height % 2 ? height + 1 : height, resolution: r, aspect_ratio: ar };
+  }
+  const baseHeight = r === '360p' ? 360 : 720;
+  const [rw, rh] = ratios[ar];
+  const width = Math.round(baseHeight * rw / rh);
+  return { width: width % 2 ? width + 1 : width, height: baseHeight, resolution: r, aspect_ratio: ar };
+}
+
 async function createSceneVideo(
   sceneDir: string,
   scene: Scene,
-  sceneIndex: number
+  sceneIndex: number,
+  renderWidth: number,
+  renderHeight: number
 ): Promise<string> {
   const imageUrl = scene.images?.[0];
 
@@ -311,8 +355,8 @@ async function createSceneVideo(
     String(duration),
 
     '-vf',
-    'scale=1280:720:force_original_aspect_ratio=decrease,' +
-      'pad=1280:720:(ow-iw)/2:(oh-ih)/2',
+    `scale=${renderWidth}:${renderHeight}:force_original_aspect_ratio=decrease,` +
+      `pad=${renderWidth}:${renderHeight}:(ow-iw)/2:(oh-ih)/2`,
 
     '-r',
     '30',
@@ -499,10 +543,11 @@ async function processRender(
   );
 
   const sceneFiles: string[] = [];
+  const dimensions = resolveRenderDimensions(request.resolution, request.aspect_ratio);
 
   try {
     console.log(
-      `[${request.jobId}] Render started`
+      `[${request.jobId}] Render started at ${dimensions.width}x${dimensions.height} (${dimensions.resolution}, ${dimensions.aspect_ratio})`
     );
 
     await updateRenderJob(request.jobId, {
@@ -536,7 +581,9 @@ async function processRender(
         await createSceneVideo(
           sceneDir,
           scene,
-          index
+          index,
+          dimensions.width,
+          dimensions.height
         );
 
       sceneFiles.push(sceneVideo);
