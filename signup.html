@@ -14,12 +14,15 @@ async function continueToCheckout(plan){
       cancel_url:location.origin+"/pricing.html?payment=canceled"
     }
   });
-  if(!checkout.error&&checkout.data&&checkout.data.url){
-    location.replace(checkout.data.url);
+  const checkoutUrl=checkout?.data?.url||checkout?.data?.checkout_url;
+  if(!checkout.error&&typeof checkoutUrl==="string"&&/^https:\/\/checkout\.stripe\.com\//.test(checkoutUrl)){
+    sessionStorage.removeItem("pending-checkout-plan");
+    window.location.href=checkoutUrl;
     return;
   }
   googleBtn.disabled=false;
-  msg.innerHTML='<div class="form-error">تعذر فتح صفحة الدفع حالياً. حاول مرة أخرى.</div>';
+  const detail=checkout?.data?.error||checkout?.error?.message||"تعذر إنشاء جلسة الدفع.";
+  msg.innerHTML='<div class="form-error">تعذر فتح صفحة الدفع: '+String(detail).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;","\"":"&quot;"}[c]))+'</div>';
 }
 (async()=>{
   const r=await supabaseClient.auth.getSession();
